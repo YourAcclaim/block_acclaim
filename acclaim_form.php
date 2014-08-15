@@ -24,7 +24,11 @@ class acclaim_form extends moodleform {
 	$mform->addElement('header', 'optional', 'optional', null, false); // add date_time selector in optional area
 	$mform->addElement('date_time_selector', 'displaydate', 'Expires', array('optional' => true));
 	$mform->setAdvanced('optional');
-	
+
+        // hidden elements
+        $mform->addElement('hidden', 'blockid');
+        $mform->addElement('hidden', 'courseid');
+        	
 	$this->add_action_buttons();
 	}
 }
