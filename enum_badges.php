@@ -21,13 +21,20 @@ function enum_badges($url,$username,$password){
     curl_setopt_array($ch, $curlConfig);
 
     $result = curl_exec($ch);
-    $json = json_decode($result);
+    $json = json_decode($result,true);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    var_dump($json);
     print $httpCode;
     curl_close($ch);
+    return $json;
 }
 
-enum_badges($url,$username,$password);
+function unravel($json){
+    foreach($json['data'] as $item){
+        print_r($item['name']);
+    } 
+}
 
+$json = enum_badges($url,$username,$password);
+//file_put_contents('/tmp/dump.txt', print_r($json['data'][0]["image_url"], true));
+unravel($json);
 ?>
