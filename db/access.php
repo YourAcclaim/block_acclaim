@@ -1,7 +1,7 @@
 <?php
     $capabilities = array(
     
-    'block/simplehtml:myaddinstance' => array(
+    'block/acclaim:myaddinstance' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
@@ -11,7 +11,7 @@
         'clonepermissionsfrom' => 'moodle/my:manageblocks'
     ),
                                                                    
-    'block/simplehtml:addinstance' => array(
+    'block/acclaim:addinstance' => array(
         'riskbitmask' => RISK_SPAM | RISK_XSS,
                                                                                 
         'captype' => 'write',
