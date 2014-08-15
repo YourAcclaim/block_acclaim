@@ -19,5 +19,12 @@ class acclaim_form extends moodleform {
 	}
 
 	$mform->addGroup($radioarray, 'radioar', 'Badge Select', array(' '), FALSE);
+	
+	// add optional grouping
+	$mform->addElement('header', 'optional', 'optional', null, false); // add date_time selector in optional area
+	$mform->addElement('date_time_selector', 'displaydate', 'Expires', array('optional' => true));
+	$mform->setAdvanced('optional');
+	
+	$this->add_action_buttons();
 	}
 }
