@@ -21,8 +21,9 @@ function enum_badges($url,$username,$password){
     curl_setopt_array($ch, $curlConfig);
 
     $result = curl_exec($ch);
+    $json = json_decode($result);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    var_dump($result);
+    var_dump($json);
     print $httpCode;
     curl_close($ch);
 }
