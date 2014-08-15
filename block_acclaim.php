@@ -35,8 +35,7 @@ class block_acclaim extends block_base{
     }
 
     public function get_content(){
-	global $COURSE;
-	global $CFG, $PAGE;
+	global $COURSE, $DB, $OUTPUT, $CFG, $PAGE;
 
         if ($this->content !== null) {
             return $this->content;
@@ -52,7 +51,6 @@ class block_acclaim extends block_base{
 
         error_log('Context acclaim info array: '.print_r(get_context_info_array($PAGE->context->id),true));
 
-	//$mform->addElement('editor', 'fieldname', 'test');	
 	$url = new moodle_url('/blocks/acclaim/view.php', array('blockid' => $this->instance->id, 'courseid' => $COURSE->id));
 	$this->content->footer = html_writer::link($url,'hello');
         
