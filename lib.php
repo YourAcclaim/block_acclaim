@@ -52,7 +52,7 @@ function return_json_badges($url,$username,$password){
 function build_radio_buttons($json){
      $badge_items = "";
      
-     if(isset($json['data'])){
+     if(isset($json['data'][0])){
          $badge_items = array();
          foreach($json['data'] as $item){
              $friendly_name = truncate($item["name"]);
