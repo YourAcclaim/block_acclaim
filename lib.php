@@ -5,7 +5,7 @@ function query_acclaim_api(){
     $url="https://jefferson-staging.herokuapp.com/api/v1/organizations/".$org_id."/badge_templates";
 
     //pass token as argument so it's not in code base
-    $username = "FZ1QZ4sDtEwNR7Tcv-Yi";
+    $username = "";
     $password = "";
 
     return return_json_badges($url,$username,$password);
