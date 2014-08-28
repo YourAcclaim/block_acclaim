@@ -24,5 +24,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-    $settings->add(new admin_setting_configtext('block_course_overview/defaultmaxcourses', 'acclaim', 'acclaim', 10, PARAM_INT));
+    $settings->add(new admin_setting_configtext( 'block_acclaim/url', 'Acclaim URL', 'Example: https://youracclaim.com', null, PARAM_TEXT));
+    $settings->add(new admin_setting_configtext( 'block_acclaim/org', 'Organization ID', 'Example: 6bb2e1c7-c66b-4d47-9301-4a6b9e792e2c', null, PARAM_TEXT));
+    $settings->add(new admin_setting_configtext( 'block_acclaim/token', 'Token', 'Example: FZ9QZ4sDtEwNR7Tcv-Yi', null, PARAM_TEXT));
 }
