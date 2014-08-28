@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="blocks/acclaim/db" VERSION="20140828" COMMENT="XMLDB file for Moodle blocks/acclaim"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="block_acclaim" COMMENT="Map course contents to an Acclaim badge_template.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="blockid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Blockid field"/>
+        <FIELD NAME="pagetitle" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false" COMMENT="Page title field"/>
+        <FIELD NAME="displaytext" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Display Text"/>
+        <FIELD NAME="format" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Format Field"/>
+        <FIELD NAME="picture" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="picture field"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="description field for the page"/>
+        <FIELD NAME="displaydate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Display Date"/>
+        <FIELD NAME="badgeid" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Badge Template ID"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>
