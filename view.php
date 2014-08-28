@@ -34,7 +34,11 @@ if($acclaim->is_cancelled()) {
     redirect($courseurl);
 } else if ($fromform = $acclaim->get_data()) {
     $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
-    //print_object($fromform);
+    print_object($fromform);
+    // We need to add code to appropriately act on and store the submitted data
+    if (!$DB->insert_record('block_acclaim', $fromform)) {
+        print_error('inserterror', 'block_acclaim');
+    }
     redirect($courseurl);
 } else {
     // form didn't validate or this is the first display
