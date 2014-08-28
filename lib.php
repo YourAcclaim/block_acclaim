@@ -2,16 +2,11 @@
 require_once(dirname(__FILE__).'/../../config.php');
 
 function query_acclaim_api(){
-    global $DB;
-    $org_id="6bb2e1c7-c66b-4d47-9301-4a6b9e792e2c";
-    $url="https://jefferson-staging.herokuapp.com/api/v1/organizations/".$org_id."/badge_templates";
-    $token = $DB->get_record('config', array('name'=>'token'));
-
-    //pass token as argument so it's not in code base
-    $username = $token->value;
+    $config = get_config('block_acclaim');
+    $url="{$config->url}/api/v1/organizations/{$config->org}/badge_templates";
+    $username=$config->token;
     $password = "";
-
-    return return_json_badges($url,$username,$password);
+    return return_json_badges($url,$username);
 }
 
 
@@ -27,7 +22,8 @@ function truncate($input){
     return $input;
 }
 
-function return_json_badges($url,$username,$password){
+function return_json_badges($url,$username){
+    $password = "";
     $ch = curl_init();
 
     $curlConfig = array(
@@ -45,7 +41,6 @@ function return_json_badges($url,$username,$password){
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
-    error_log("json ".print_r($json,true));
     return $json;
 }
 
