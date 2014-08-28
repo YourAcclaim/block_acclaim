@@ -46,15 +46,11 @@ class block_acclaim extends block_base{
         }
 
         $this->content         =  new stdClass;
-        $this->content->text   = 'The content of our Acclaim block!';
-
-	$url = new moodle_url('/blocks/acclaim/view.php', array('blockid' => $this->instance->id, 'courseid' => $COURSE->id));
-	error_log('instance id: '.$this->instance->id);
-	error_log('course id: '.$COURSE->id);
-	error_log('url: '.$url);
-
-        error_log('Context acclaim info array: '.print_r(get_context_info_array($PAGE->context->id),true));
-
+	if (! empty($this->config->text)) {
+    	    $this->content->text = $this->config->text;
+	}
+        
+	//$this->content->text   = 'The content of our Acclaim block!';
 	$url = new moodle_url('/blocks/acclaim/view.php', array('blockid' => $this->instance->id, 'courseid' => $COURSE->id));
 	$this->content->footer = html_writer::link($url,'hello');
         
