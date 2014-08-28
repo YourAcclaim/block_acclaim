@@ -12,17 +12,16 @@ class block_acclaim extends block_base{
         return true;
     }
 
-    function specialization() {
-	$config = get_config('block_acclaim');
-	if (!empty($config->title)) {
-    	   $this->title = $config->title;
-  	} else {
-    	   $config->title = 'Default title ...';
-  	}
- 
-  	if (empty($config->text)) {
-    	   $config->text = 'Default text ...';
-  	}   
+    public function specialization() {
+	if (!empty($this->config->title)) {
+	    $this->title = $this->config->title;
+	} else {
+	    $this->config->title = 'Default title ...';
+	}
+
+	if (empty($this->config->text)) {
+	    $this->config->text = 'Default text ...';
+	    }    
     }
 
     function instance_allow_multiple() {
