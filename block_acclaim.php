@@ -8,6 +8,10 @@ class block_acclaim extends block_base{
         $this->title = get_string('acclaim', 'block_acclaim');
     }
 
+    public function has_config() {
+        return true;
+    }
+
     function specialization() {
 	if (!empty($this->config->title)) {
     	   $this->title = $this->config->title;
