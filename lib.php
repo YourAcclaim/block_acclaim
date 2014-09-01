@@ -1,4 +1,5 @@
 <?php
+//GLOBAL $DB;
 require_once(dirname(__FILE__).'/../../config.php');
 
 function query_acclaim_api(){
@@ -20,6 +21,37 @@ function truncate($input){
         }
 
     return $input;
+}
+
+function test_the_test(){
+    return "test";
+}
+
+function get_badge_id($event){
+    global $DB;
+    $course = $DB->get_record('block_acclaim', array('courseid' => $event->courseid), '*', MUST_EXIST);
+    $badge_id = $course->badgeid;
+    return $badge_id;
+}
+
+function create_data_array($event,$badge_id){
+    $user_id = $event->userid;
+    $course_id = $event->courseid;
+    $user = $DB->get_record('user', array('id'=>$user_id));
+    $firstname = $user->firstname;
+    $lastname = $user->lastname;
+    $email = $user->email;
+    $date_time = date('Y-m-d  h:i:s a', time());
+
+    $data = array(
+        'badge_template_id' => $badge_id,
+        'issued_to_first_name' => $user->firstname,
+        'issued_to_last_name' => $user->lastname,
+        'expires_at' => $expires_at->value,
+        'recipient_email' => $user->email,
+        'issued_at' => $date_time
+    );
+    return $data;
 }
 
 function return_json_badges($url,$username){
