@@ -34,24 +34,31 @@ function get_badge_id($event){
     return $badge_id;
 }
 
-function get_acclaim_config()
-{
-    global $DB;
-    return $DB->get_record('config_plugins', array('plugin'=>'block_acclaim'), '*', MUST_EXIST);
-}
+//function get_acclaim_config()
+//{
+//    global $DB;
+//    error_log("getting block config");
+//    $config = $DB->get_record('config_plugins', array('plugin'=>'block_acclaim'), '*', MUST_EXIST);
+//    error_log("the config".print_r($config,true));
+//    return $config;
+//}
 
 function get_issue_badge_url()
 {
+    error_log("fetching badge url");
     //https://jefferson-staging.herokuapp.com/api/v1/organizations/6bb2e1c7-c66b-4d47-9301-4a6b9e792e2c/badges
-    $block_acclaim_config = get_acclaim_config();
+    $block_acclaim_config = get_config('block_acclaim');
+    error_log("config: ".print_r($block_acclaim_config,true));
+    
     $base_url = $block_acclaim_config->url;
     $org_id = $block_acclaim_config->org;
     $request_url = "{$base_url}/api/v1/organizations/{$org_id}/badges";
+    error_log("the request url".$request_url);
     return $request_url;
 }
 
 function get_request_token(){
-    $block_acclaim_config = get_acclaim_config();
+    $block_acclaim_config = get_config('block_acclaim');
     return $block_acclaim_config->token;
 }
 
@@ -61,23 +68,26 @@ function return_user($user_id){
 }
 
 function create_data_array($event,$badge_id,$expires_at){
-    global $DB;
+    error_log("create data array");
     $user_id = $event->userid;
     $course_id = $event->courseid;
     $user = return_user($user_id);
     $firstname = $user->firstname;
     $lastname = $user->lastname;
     $email = $user->email;
+    
     $date_time = date('Y-m-d  h:i:s a', time());
 
     $data = array(
         'badge_template_id' => $badge_id,
-        'issued_to_first_name' => $user->firstname,
-        'issued_to_last_name' => $user->lastname,
+        'issued_to_first_name' => $firstname,
+        'issued_to_last_name' => $lastname,
         'expires_at' => $expires_at,
-        'recipient_email' => $user->email,
+        'recipient_email' => $email,
         'issued_at' => $date_time
     );
+
+    error_log("the data array".print_r($data,true));
     return $data;
 }
 
