@@ -31,11 +31,11 @@ require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 
 class acclaim_lib_test extends advanced_testcase{
     function setUp(){
-	global $DB;
+//	global $DB;
 	$this->resetAfterTest(true);
     }
 
-    public function mock_event(){
+    public function mock_event($id){
         
         //[eventname] => \core\event\course_completed
         //[component] => core
@@ -69,7 +69,7 @@ class acclaim_lib_test extends advanced_testcase{
         $event->contextid = "147";
         $event->contextlevel = "50";
         $event->contextinstanceid = "14";
-        $event->userid = "2";
+        $event->userid = $id;
         $event->courseid = "123";
         $event->relateduserid = "2";
         $event->anonymous = "0";
@@ -83,7 +83,7 @@ class acclaim_lib_test extends advanced_testcase{
         $DB->delete_records($table);
         $this->assertEmpty($DB->get_records($table));
 
-        $event = $this->mock_event();
+        $event = $this->mock_event('2');
         
         $dataobject = new stdClass();
         $dataobject->badgeid = '919309fc-648c-42cb-9415-7f8ecf2f681f';
@@ -93,10 +93,55 @@ class acclaim_lib_test extends advanced_testcase{
         
         $badge_id = get_badge_id($event);
         $this->assertEquals($dataobject->badgeid,$badge_id);
-    }
+   }
 
-    public function test_something() {
-	$test_val = test_the_test();
-	$this->assertEquals($test_val,'test');	
-    }
+   public function test_create_array()
+   {
+        $badge_id = "123";
+        $data = create_data_array($this->mock_event('2'),$badge_id,"",'1');
+        $is_set = isset($data);
+        $this->assertEquals(true,$is_set);
+   }
+
+   public function test_issue_badge()
+   {
+       global $DB;
+       $user = $this->getDataGenerator()->create_user(array('email'=>'user1@example.com', 'username'=>'user1'));
+       //$user = $this->getDataGenerator()->create_user();
+       $id = $user->id;
+       $badge_id = '919309fc-648c-42cb-9415-7f8ecf2f681f';
+       $expires = '';
+       $data = create_data_array($this->mock_event($id),$badge_id,"",$id);
+
+       $target_url = "https://jefferson-staging.herokuapp.com/api/v1/organizations/6bb2e1c7-c66b-4d47-9301-4a6b9e792e2c/badges";
+
+       $token = getenv('token');
+       $return_code = issue_badge_request($data,$target_url,$token);
+       $this->assertEquals(201,$return_code);
+   }
+
+//cant get this test to work because it is unable to create config_plugin table
+//circle back
+//    public function test_get_issue_badge_url(){
+//        global $DB;
+//        $this->resetAfterTest(false);
+ //       $DB->delete_records($table);
+//        $this->assertEmpty($DB->get_records($table));
+//        $dataobject = new stdClass();
+//        $dataobject->plugin = "block_acclaim";
+//        $dataobject->name = "url";
+//        $dataobject->value = "https://jefferson-staging.herokuapp.com";
+        
+//        $dataobject2 = new stdClass();
+//        $dataobject2->plugin = "block_acclaim";
+//        $dataobject2->name = "org";
+//        $dataobject2->value = "6bb2e1c7-c66b-4d47-9301-4a6b9e792e2c";
+
+//        $objects = array($dataobject,$dataobject2);
+
+//        $DB->insert_record($table, $objects);
+
+//        $target_url = "https://jefferson-staging.herokuapp.com/api/v1/organizations/6bb2e1c7-c66b-4d47-9301-4a6b9e792e2c/badges";
+  //      $this->assertEquals($target_url,get_issue_badge_url());
+//    }
 }
