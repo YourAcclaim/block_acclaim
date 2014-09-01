@@ -34,10 +34,37 @@ function get_badge_id($event){
     return $badge_id;
 }
 
-function create_data_array($event,$badge_id){
+function get_acclaim_config()
+{
+    global $DB;
+    return $DB->get_record('config_plugins', array('plugin'=>'block_acclaim'), '*', MUST_EXIST);
+}
+
+function get_issue_badge_url()
+{
+    //https://jefferson-staging.herokuapp.com/api/v1/organizations/6bb2e1c7-c66b-4d47-9301-4a6b9e792e2c/badges
+    $block_acclaim_config = get_acclaim_config();
+    $base_url = $block_acclaim_config->url;
+    $org_id = $block_acclaim_config->org;
+    $request_url = "{$base_url}/api/v1/organizations/{$org_id}/badges";
+    return $request_url;
+}
+
+function get_request_token(){
+    $block_acclaim_config = get_acclaim_config();
+    return $block_acclaim_config->token;
+}
+
+function return_user($user_id){
+    global $DB;
+    return $DB->get_record('user', array('id'=>$user_id), '*', MUST_EXIST);
+}
+
+function create_data_array($event,$badge_id,$expires_at){
+    global $DB;
     $user_id = $event->userid;
     $course_id = $event->courseid;
-    $user = $DB->get_record('user', array('id'=>$user_id));
+    $user = return_user($user_id);
     $firstname = $user->firstname;
     $lastname = $user->lastname;
     $email = $user->email;
@@ -47,16 +74,49 @@ function create_data_array($event,$badge_id){
         'badge_template_id' => $badge_id,
         'issued_to_first_name' => $user->firstname,
         'issued_to_last_name' => $user->lastname,
-        'expires_at' => $expires_at->value,
+        'expires_at' => $expires_at,
         'recipient_email' => $user->email,
         'issued_at' => $date_time
     );
     return $data;
 }
 
+function make_curl_request($header_type,$url,$username,$data)
+{
+    $ch = curl_init();
+    $password = "";
+
+    $curlConfig = array(
+        CURLOPT_HTTPHEADER     => array('Accept: application/json'),
+        CURLOPT_CUSTOMREQUEST  => $header_type,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_URL            => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_USERPWD        => $username . ":" . $password,
+        CURLOPT_POSTFIELDS     => $data,
+    );
+
+    //        error_log('curl_array: '. print_r($curlConfig,true));
+    curl_setopt_array($ch, $curlConfig);
+
+    $result = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    return $httpCode;
+}
+
+function issue_badge_request($data,$url,$token)
+{
+    $header = "POST";
+    return make_curl_request($header,$url,$token,$data);
+}
+
+
 function return_json_badges($url,$username){
     $password = "";
     $ch = curl_init();
+
+
 
     $curlConfig = array(
     CURLOPT_HTTPHEADER     => array('Accept: application/json'),
