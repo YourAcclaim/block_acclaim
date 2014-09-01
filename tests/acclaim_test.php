@@ -30,7 +30,73 @@ require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 
 class acclaim_lib_test extends advanced_testcase{
+    function setUp(){
+	global $DB;
+	$this->resetAfterTest(true);
+    }
+
+    public function mock_event(){
+        
+        //[eventname] => \core\event\course_completed
+        //[component] => core
+        //[action] => completed
+        //[target] => course
+        //[objecttable] => course_completions
+        //[objectid] => 23
+        //[crud] => u
+        //[edulevel] => 2
+        //[contextid] => 147
+        //[contextlevel] => 50
+        //[contextinstanceid] => 14
+        //[userid] => 2
+        //[courseid] => 14
+        //[relateduserid] => 2
+        //[anonymous] => 0
+        //[other] => Array
+            //(
+                //[relateduserid] => 2
+            //)
+        //[timecreated] => 1409543537
+        $event = new stdClass();
+        $event->eventname = " \core\event\course_completed";
+        $event->component = "core";
+        $event->action = "completed";
+        $event->target = "course";
+        $event->objecttable = "course_completions";
+        $event->objectid = "23";
+        $event->crud = "u";
+        $event->edulevel = "2";
+        $event->contextid = "147";
+        $event->contextlevel = "50";
+        $event->contextinstanceid = "14";
+        $event->userid = "2";
+        $event->courseid = "123";
+        $event->relateduserid = "2";
+        $event->anonymous = "0";
+        $event->timecreated = "1409543537";
+        return $event;
+    }
+
+    public function test_get_badge_id(){
+        global $DB;
+        $table = 'block_acclaim';
+        $DB->delete_records($table);
+        $this->assertEmpty($DB->get_records($table));
+
+        $event = $this->mock_event();
+        
+        $dataobject = new stdClass();
+        $dataobject->badgeid = '919309fc-648c-42cb-9415-7f8ecf2f681f';
+        $dataobject->courseid = $event->courseid;
+        $dataobject->expiration = 0;
+        $DB->insert_record($table, $dataobject, $returnid=true, $bulk=false);
+        
+        $badge_id = get_badge_id($event);
+        $this->assertEquals($dataobject->badgeid,$badge_id);
+    }
+
     public function test_something() {
-	$this->assertEquals('1','1');	
+	$test_val = test_the_test();
+	$this->assertEquals($test_val,'test');	
     }
 }
