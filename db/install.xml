@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/acclaim/db" VERSION="20140828" COMMENT="XMLDB file for Moodle blocks/acclaim"
+<XMLDB PATH="blocks/acclaim/db" VERSION="20140901" COMMENT="XMLDB file for Moodle blocks/acclaim"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -7,13 +7,16 @@
     <TABLE NAME="block_acclaim" COMMENT="Map course contents to an Acclaim badge_template.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="badgeid" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Badge Template ID"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Course ID"/>
+        <FIELD NAME="badgeid" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Badge Template ID"/>
         <FIELD NAME="expiration" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Badge Expiration"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>
