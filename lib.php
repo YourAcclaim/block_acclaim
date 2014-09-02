@@ -35,8 +35,8 @@ function get_badge_id($course_id)
     global $DB;
     $badge_id = "";
 
-    $course = $DB->get_record('block_acclaim', array('courseid' => $course_id), '*', MUST_EXIST);
-    
+    $course = $DB->get_record('block_acclaim', array('courseid' => $course_id));
+
     if(!empty($course)){
         $badge_id = $course->badgeid;
     }
@@ -135,8 +135,6 @@ function return_json_badges($url,$username){
     $password = "";
     $ch = curl_init();
 
-
-
     $curlConfig = array(
     CURLOPT_HTTPHEADER     => array('Accept: application/json'),
     CURLOPT_CUSTOMREQUEST  => "GET",
@@ -176,6 +174,4 @@ function block_acclaim_images() {
     $json = query_acclaim_api();
     return build_radio_buttons($json);
 }
-
-?>
 

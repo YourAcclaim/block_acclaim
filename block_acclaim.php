@@ -1,7 +1,31 @@
 <?php
 
-//require_once('../config.php');
-//require_once('acclaim_form.php');
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+* Lib.
+*
+* @package    mod_acclaim
+* @copyright  2014 Yancy Ribbens
+* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+*/
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 
 class block_acclaim extends block_base{
     public function init(){
@@ -13,15 +37,16 @@ class block_acclaim extends block_base{
     }
 
     public function specialization() {
-	if (!empty($this->config->title)) {
-	    $this->title = $this->config->title;
-	} else {
-	    $this->config->title = 'Default title ...';
-	}
+	global $COURSE;
+        $course_id = $COURSE->id;
 
-	if (empty($this->config->text)) {
-	    $this->config->text = 'Default text ...';
-	    }    
+        $badge_id = get_badge_id($course_id);
+        
+        if($badge_id == ""){
+            $badge_id = "No Badge Selected";
+        }
+
+        $this->config->text = $badge_id;
     }
 
     function instance_allow_multiple() {
