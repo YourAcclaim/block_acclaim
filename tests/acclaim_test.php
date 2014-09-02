@@ -123,12 +123,12 @@ class acclaim_lib_test extends advanced_testcase{
        $fromform = $this->mock_form();
 
        $result = write_badge_to_issue($fromform);
-       $count = $DB->count_records_select($table, "badgeid = '1edb816d-a9fb-445d-b024-bb52075718e5'");
+       $count = $DB->count_records_select($table, "courseid = '38'");
        
        $this->assertEquals($count,1);
 
        $result = write_badge_to_issue($fromform);
-       $count = $DB->count_records_select($table, "badgeid = '1edb816d-a9fb-445d-b024-bb52075718e5'");
+       $count = $DB->count_records_select($table, "courseid = '38'");
 
        $this->assertEquals($count,1);
    }

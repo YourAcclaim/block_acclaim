@@ -49,9 +49,9 @@ function write_badge_to_issue($fromform)
     global $DB;
     $table = 'block_acclaim';
 
-    $exists = $DB->record_exists_select($table, "badgeid = '{$fromform->badgeid}'");
+    $exists = $DB->record_exists_select($table, "courseid = '{$fromform->courseid}'");
         if($exists){
-        $DB->delete_records_select($table, "badgeid = '{$fromform->badgeid}'");
+        $DB->delete_records_select($table, "courseid = '{$fromform->courseid}'");
     }
     
     return $DB->insert_record('block_acclaim', $fromform);
