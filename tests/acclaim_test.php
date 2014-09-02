@@ -96,7 +96,8 @@ class acclaim_lib_test extends advanced_testcase{
     }
 
 
-    public function test_get_badge_id(){
+    public function test_get_badge_id()
+    {
         global $DB;
         $table = 'block_acclaim';
         $DB->delete_records($table);
@@ -166,11 +167,14 @@ class acclaim_lib_test extends advanced_testcase{
    {
        global $DB;
        $user = $this->getDataGenerator()->create_user(array('email'=>'user1@example.com', 'username'=>'user1'));
-       //$user = $this->getDataGenerator()->create_user();
        $id = $user->id;
-       $badge_id = '919309fc-648c-42cb-9415-7f8ecf2f681f';
-       $expires = '';
-       $data = create_data_array($this->mock_event($id),$badge_id,"",$id);
+        
+       $event = $this->mock_event($id);
+       $badge_id = '3c7e3eb5-0e41-445a-a4e2-32d539543ab6';
+       $timestamp = '1409647800';
+       $expiration = convert_time_stamp($timestamp); 
+
+       $data = create_data_array($event,$badge_id,$expiration,$id);
 
        $target_url = "https://jefferson-staging.herokuapp.com/api/v1/organizations/6bb2e1c7-c66b-4d47-9301-4a6b9e792e2c/badges";
 

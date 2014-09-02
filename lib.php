@@ -85,6 +85,11 @@ function return_user($user_id){
     return $DB->get_record('user', array('id'=>$user_id), '*', MUST_EXIST);
 }
 
+function convert_time_stamp($timestamp)
+{
+    return gmdate("Y-m-d  h:i:s a", $timestamp);
+}
+
 function create_data_array($event,$badge_id,$expires_at){
     $user_id = $event->userid;
     $course_id = $event->courseid;
