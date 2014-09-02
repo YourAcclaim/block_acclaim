@@ -2,7 +2,8 @@
 //GLOBAL $DB;
 require_once(dirname(__FILE__).'/../../config.php');
 
-function query_acclaim_api(){
+function query_acclaim_api()
+{
     $config = get_config('block_acclaim');
     $url="{$config->url}/api/v1/organizations/{$config->org}/badge_templates";
     $username=$config->token;
@@ -11,7 +12,8 @@ function query_acclaim_api(){
 }
 
 
-function truncate($input){
+function truncate($input)
+{
     $max_length = 18;
 
     if(strlen($input) > $max_length){
@@ -23,11 +25,13 @@ function truncate($input){
     return $input;
 }
 
-function test_the_test(){
+function test_the_test()
+{
     return "test";
 }
 
-function get_badge_id($course_id){
+function get_badge_id($course_id)
+{
     global $DB;
     $badge_id = "";
 
@@ -40,17 +44,27 @@ function get_badge_id($course_id){
     return $badge_id;
 }
 
+function write_badge_to_issue($fromform)
+{
+    global $DB;
+    $table = 'block_acclaim';
+
+    $exists = $DB->record_exists_select($table, "badgeid = '{$fromform->badgeid}'");
+        if($exists){
+        $DB->delete_records_select($table, "badgeid = '{$fromform->badgeid}'");
+    }
+    
+    return $DB->insert_record('block_acclaim', $fromform);
+}
+
 function get_issue_badge_url()
 {
-    error_log("fetching badge url");
     //https://jefferson-staging.herokuapp.com/api/v1/organizations/6bb2e1c7-c66b-4d47-9301-4a6b9e792e2c/badges
     $block_acclaim_config = get_config('block_acclaim');
-    error_log("config: ".print_r($block_acclaim_config,true));
     
     $base_url = $block_acclaim_config->url;
     $org_id = $block_acclaim_config->org;
     $request_url = "{$base_url}/api/v1/organizations/{$org_id}/badges";
-    error_log("the request url".$request_url);
     return $request_url;
 }
 
@@ -65,7 +79,6 @@ function return_user($user_id){
 }
 
 function create_data_array($event,$badge_id,$expires_at){
-    error_log("create data array");
     $user_id = $event->userid;
     $course_id = $event->courseid;
     $user = return_user($user_id);
@@ -84,7 +97,6 @@ function create_data_array($event,$badge_id,$expires_at){
         'issued_at' => $date_time
     );
 
-    error_log("the data array".print_r($data,true));
     return $data;
 }
 
