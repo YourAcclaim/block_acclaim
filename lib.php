@@ -35,7 +35,7 @@ function get_badge_id($course_id)
     global $DB;
     $badge_id = "";
 
-    $course = $DB->get_record('block_acclaim', array('courseid' => $course_id), '*', MUST_EXIST);
+    $course = $DB->get_record('block_acclaim', array('courseid' => $course_id));
     
     if(!empty($course)){
         $badge_id = $course->badgeid;
