@@ -9,10 +9,10 @@ class acclaim_form extends moodleform {
         $mform =& $this->_form;
    
 	//populate form 
-	$mform->addElement('header','displayinfo', 'Acclaim Badges');
+	$mform->addElement('header','displayinfo', 'Select Badge');
 	$badge_items = block_acclaim_images();
-        $mform->addElement('select', 'badgeid', 'forum', $badge_items, '');
-	$mform->addElement('header', 'optional', 'optional', null, false); // add date_time selector in optional area
+        $mform->addElement('select', 'badgeid', 'Acclaim Badges', $badge_items, '');
+	//$mform->addElement('header', 'optional', 'Optional Settings', null, false); // add date_time selector in optional area
 	$mform->addElement('date_time_selector', 'expiration', 'Expires', array('optional' => true));
 	$mform->setAdvanced('optional');
 
