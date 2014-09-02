@@ -77,6 +77,25 @@ class acclaim_lib_test extends advanced_testcase{
         return $event;
     }
 
+    private function mock_form()
+    {
+        //[badgeid] => 1edb816d-a9fb-445d-b024-bb52075718e5
+        //[expiration] => 0
+        //[blockid] => 
+        //[courseid] => 38
+        //[submitbutton] => Save changes
+
+        $fromform = new stdClass();
+        $fromform->badgeid = "1edb816d-a9fb-445d-b024-bb52075718e5";
+        $fromform->expiration = 0;
+        $fromform->blockid = "";
+        $fromform->courseid = "38";
+        $fromform->submitbutton = "Save changes";
+
+        return $fromform;
+    }
+
+
     public function test_get_badge_id(){
         global $DB;
         $table = 'block_acclaim';
@@ -91,9 +110,29 @@ class acclaim_lib_test extends advanced_testcase{
         $dataobject->expiration = 0;
         $DB->insert_record($table, $dataobject, $returnid=true, $bulk=false);
         
-        $badge_id = get_badge_id($event);
+        $badge_id = get_badge_id($event->courseid);
         $this->assertEquals($dataobject->badgeid,$badge_id);
    }
+
+   public function test_write_block_record()
+   {
+       global $DB;
+       $table = 'block_acclaim';
+       $DB->delete_records($table);
+       $this->assertEmpty($DB->get_records($table));
+       $fromform = $this->mock_form();
+
+       $result = write_badge_to_issue($fromform);
+       $count = $DB->count_records_select($table, "badgeid = '1edb816d-a9fb-445d-b024-bb52075718e5'");
+       
+       $this->assertEquals($count,1);
+
+       $result = write_badge_to_issue($fromform);
+       $count = $DB->count_records_select($table, "badgeid = '1edb816d-a9fb-445d-b024-bb52075718e5'");
+
+       $this->assertEquals($count,1);
+   }
+
 
    public function test_create_array()
    {
