@@ -27,21 +27,18 @@ function test_the_test(){
     return "test";
 }
 
-function get_badge_id($event){
+function get_badge_id($course_id){
     global $DB;
-    $course = $DB->get_record('block_acclaim', array('courseid' => $event->courseid), '*', MUST_EXIST);
-    $badge_id = $course->badgeid;
+    $badge_id = "";
+
+    $course = $DB->get_record('block_acclaim', array('courseid' => $course_id), '*', MUST_EXIST);
+    
+    if(!empty($course)){
+        $badge_id = $course->badgeid;
+    }
+
     return $badge_id;
 }
-
-//function get_acclaim_config()
-//{
-//    global $DB;
-//    error_log("getting block config");
-//    $config = $DB->get_record('config_plugins', array('plugin'=>'block_acclaim'), '*', MUST_EXIST);
-//    error_log("the config".print_r($config,true));
-//    return $config;
-//}
 
 function get_issue_badge_url()
 {
