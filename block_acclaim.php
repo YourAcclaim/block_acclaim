@@ -40,13 +40,13 @@ class block_acclaim extends block_base{
 	global $COURSE;
         $course_id = $COURSE->id;
 
-        $badge_id = get_badge_id($course_id);
+        $badge_name = get_badge_info($course_id,"badgename");
         
-        if($badge_id == ""){
-            $badge_id = "No Badge Selected";
+        if($badge_name == ""){
+            $badge_name = "No Badge Selected";
         }
 
-        $this->config->text = $badge_id;
+        $this->config->text = $badge_name;
     }
 
     function instance_allow_multiple() {

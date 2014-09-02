@@ -30,18 +30,18 @@ function test_the_test()
     return "test";
 }
 
-function get_badge_id($course_id)
+function get_badge_info($course_id,$field)
 {
     global $DB;
-    $badge_id = "";
+    $return_val = "";
 
     $course = $DB->get_record('block_acclaim', array('courseid' => $course_id));
     
     if(!empty($course)){
-        $badge_id = $course->badgeid;
+        $return_val = $course->$field;
     }
 
-    return $badge_id;
+    return $return_val;
 }
 
 function get_block_course($course_id)
@@ -55,6 +55,8 @@ function write_badge_to_issue($fromform)
 {
     global $DB;
     $table = 'block_acclaim';
+
+    $fromform = update_form_with_badge_name($fromform);
 
     $exists = $DB->record_exists_select($table, "courseid = '{$fromform->courseid}'");
         if($exists){
@@ -92,6 +94,19 @@ function convert_time_stamp($timestamp)
     }
 
     return $timestamp;
+}
+
+function update_form_with_badge_name($fromform)
+{
+    $all_badges_names = json_decode($fromform->badgename);
+    $badge_id = $fromform->badgeid;
+    
+    if(isset($all_badges_names->$badge_id)){
+        $badge_name =  $all_badges_names->$badge_id;
+        $fromform->badgename = $badge_name;
+    }
+
+    return $fromform;
 }
 
 function create_data_array($event,$badge_id,$timestamp){
