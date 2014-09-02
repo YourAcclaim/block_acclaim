@@ -28,14 +28,15 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 
 class group_observers {
-
     public static function issue_badge($event) {
 	global $DB;
-        $badge_id = get_badge_id($event);
+        error_log("Issue badge");
+        $badge_id = get_badge_id($event->courseid);
         $data = create_data_array($event,$badge_id,"");
         $url = get_issue_badge_url();
         $token = get_request_token();
         $return_code = issue_badge_request($data,$url,$token);
+        error_code("Badge return code: ".$return_code);
     }
 }
 
