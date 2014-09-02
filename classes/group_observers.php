@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 class group_observers {
     public static function issue_badge($event) {
 	global $DB;
-        error_log("Issue badge");
+        
         $course = get_block_course($event->courseid);
         $expires_timestamp = "";
                 
@@ -42,7 +42,6 @@ class group_observers {
         $url = get_issue_badge_url();
         $token = get_request_token();
         $return_code = issue_badge_request($data,$url,$token);
-        error_code("Badge return code: ".$return_code);
     }
 }
 
