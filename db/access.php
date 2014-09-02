@@ -1,5 +1,17 @@
 <?php
     $capabilities = array(
+
+        // Can edit objectives
+    'block/acclaim:editbadge' => array(
+        'captype' => 'write',
+        'riskbitmask' => RISK_SPAM,
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+            )
+        ),
     
     'block/acclaim:myaddinstance' => array(
         'captype' => 'write',
