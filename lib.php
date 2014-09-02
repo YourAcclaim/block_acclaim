@@ -110,7 +110,7 @@ function update_form_with_badge_name($fromform)
 }
 
 function create_data_array($event,$badge_id,$timestamp){
-    $user_id = $event->userid;
+    $user_id = $event->relateduserid;
     $course_id = $event->courseid;
     $user = return_user($user_id);
     $firstname = $user->firstname;
