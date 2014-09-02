@@ -85,12 +85,21 @@ class acclaim_lib_test extends advanced_testcase{
         //[courseid] => 38
         //[submitbutton] => Save changes
 
+        $badgenames = [
+            "123" => "mos",
+            "1edb816d-a9fb-445d-b024-bb52075718e5" => "def",
+            ];
+
+        $json = json_encode($badgenames);
+
         $fromform = new stdClass();
         $fromform->badgeid = "1edb816d-a9fb-445d-b024-bb52075718e5";
         $fromform->expiration = 0;
         $fromform->blockid = "";
         $fromform->courseid = "38";
+        $fromform->badgename = $json;
         $fromform->submitbutton = "Save changes";
+        
 
         return $fromform;
     }
@@ -111,7 +120,7 @@ class acclaim_lib_test extends advanced_testcase{
         $dataobject->expiration = 0;
         $DB->insert_record($table, $dataobject, $returnid=true, $bulk=false);
         
-        $badge_id = get_badge_id($event->courseid);
+        $badge_id = get_badge_info($event->courseid,"badgeid");
         $this->assertEquals($dataobject->badgeid,$badge_id);
    }
 
@@ -147,6 +156,7 @@ class acclaim_lib_test extends advanced_testcase{
        $count = $DB->count_records_select($table, "courseid = '38'");
        
        $this->assertEquals($count,1);
+       //var_dump($fromform);
 
        $result = write_badge_to_issue($fromform);
        $count = $DB->count_records_select($table, "courseid = '38'");
@@ -180,6 +190,16 @@ class acclaim_lib_test extends advanced_testcase{
        $token = getenv('token');
        $return_code = issue_badge_request($data,$target_url,$token);
        $this->assertEquals(201,$return_code);
+   }
+
+   public function test_badgename()
+   {
+       $fromform = $this->mock_form();
+
+       $fromform = update_form_with_badge_name($fromform);
+
+       $this->assertEquals("def",$fromform->badgename);
+
    }
 
 //cant get this test to work because it is unable to create config_plugin table
