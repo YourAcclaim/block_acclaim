@@ -154,7 +154,6 @@ class acclaim_lib_test extends advanced_testcase{
        $this->assertEquals($count,1);
    }
 
-
    public function test_create_array()
    {
         $badge_id = "123";
@@ -172,9 +171,9 @@ class acclaim_lib_test extends advanced_testcase{
        $event = $this->mock_event($id);
        $badge_id = '3c7e3eb5-0e41-445a-a4e2-32d539543ab6';
        $timestamp = '1409647800';
-       $expiration = convert_time_stamp($timestamp); 
-
-       $data = create_data_array($event,$badge_id,$expiration,$id);
+       $expiration = $timestamp;
+       
+       $data = create_data_array($event,$badge_id,$expiration);
 
        $target_url = "https://jefferson-staging.herokuapp.com/api/v1/organizations/6bb2e1c7-c66b-4d47-9301-4a6b9e792e2c/badges";
 
