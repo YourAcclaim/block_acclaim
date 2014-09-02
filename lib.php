@@ -87,18 +87,22 @@ function return_user($user_id){
 
 function convert_time_stamp($timestamp)
 {
-    return gmdate("Y-m-d  h:i:s a", $timestamp);
+    if($timestamp){
+        return gmdate("Y-m-d  h:i:s a", $timestamp);
+    }
+
+    return $timestamp;
 }
 
-function create_data_array($event,$badge_id,$expires_at){
+function create_data_array($event,$badge_id,$timestamp){
     $user_id = $event->userid;
     $course_id = $event->courseid;
     $user = return_user($user_id);
     $firstname = $user->firstname;
     $lastname = $user->lastname;
     $email = $user->email;
-    
-    $date_time = date('Y-m-d  h:i:s a', time());
+    $expires_at = convert_time_stamp($timestamp); 
+    $date_time = convert_time_stamp(time());
 
     $data = array(
         'badge_template_id' => $badge_id,
