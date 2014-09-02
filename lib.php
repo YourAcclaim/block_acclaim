@@ -44,6 +44,13 @@ function get_badge_id($course_id)
     return $badge_id;
 }
 
+function get_block_course($course_id)
+{
+    global $DB;
+    $course = $DB->get_record('block_acclaim', array('courseid' => $course_id), '*', MUST_EXIST);
+    return $course;
+}
+
 function write_badge_to_issue($fromform)
 {
     global $DB;
@@ -134,8 +141,6 @@ function issue_badge_request($data,$url,$token)
 function return_json_badges($url,$username){
     $password = "";
     $ch = curl_init();
-
-
 
     $curlConfig = array(
     CURLOPT_HTTPHEADER     => array('Accept: application/json'),

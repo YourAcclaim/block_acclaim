@@ -114,6 +114,26 @@ class acclaim_lib_test extends advanced_testcase{
         $this->assertEquals($dataobject->badgeid,$badge_id);
    }
 
+   public function test_get_course()
+   {
+       global $DB;
+       $table = 'block_acclaim';
+       $DB->delete_records($table);
+       $this->assertEmpty($DB->get_records($table));
+
+        $event = $this->mock_event('2');
+
+        $dataobject = new stdClass();
+        $dataobject->badgeid = '919309fc-648c-42cb-9415-7f8ecf2f681f';
+        $dataobject->courseid = $event->courseid;
+        $dataobject->expiration = 1409643600;
+        $DB->insert_record($table, $dataobject, $returnid=true, $bulk=false);
+
+        $course = get_block_course($event->courseid);
+        $this->assertEquals($dataobject->expiration,$course->expiration);
+        $this->assertEquals($dataobject->badgeid,$course->badgeid);
+   }
+
    public function test_write_block_record()
    {
        global $DB;
