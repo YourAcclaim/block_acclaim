@@ -2,6 +2,7 @@
 
 require_once('../../config.php');
 require_once('acclaim_form.php');
+require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 
 global $DB, $OUTPUT, $PAGE;
 
@@ -34,9 +35,9 @@ if($acclaim->is_cancelled()) {
     redirect($courseurl);
 } else if ($fromform = $acclaim->get_data()) {
     $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
-    print_object($fromform);
+    //print_object($fromform);
     // We need to add code to appropriately act on and store the submitted data
-    if (!$DB->insert_record('block_acclaim', $fromform)) {
+    if (!write_badge_to_issue($fromform)) {
         print_error('inserterror', 'block_acclaim');
     }
     redirect($courseurl);
