@@ -19,7 +19,8 @@ class acclaim_form extends moodleform {
         // hidden elements
         $mform->addElement('hidden', 'blockid');
         $mform->addElement('hidden', 'courseid');
-	
+        $mform->addElement('hidden','badgename',json_encode($badge_items));
+        	
 	$this->add_action_buttons();
 	}
 }
