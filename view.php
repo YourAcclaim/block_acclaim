@@ -16,7 +16,6 @@ require_login($course);
 
 $PAGE->set_url('/blocks/acclaim/view.php', array('id' => $courseid));
 $PAGE->set_pagelayout('standard');
-$PAGE->set_heading('edithtml');
 
 $acclaim = new acclaim_form();
 
