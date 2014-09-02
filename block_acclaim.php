@@ -52,7 +52,7 @@ class block_acclaim extends block_base{
         
 	//$this->content->text   = 'The content of our Acclaim block!';
 	$url = new moodle_url('/blocks/acclaim/view.php', array('blockid' => $this->instance->id, 'courseid' => $COURSE->id));
-	$this->content->footer = html_writer::link($url,'hello');
+	$this->content->footer = html_writer::link($url,'Select Badge');
         
 	return $this->content;
     }
