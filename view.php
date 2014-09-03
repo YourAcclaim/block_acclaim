@@ -8,6 +8,7 @@ global $DB, $OUTPUT, $PAGE;
 
 $courseid = required_param('courseid', PARAM_INT);
 $blockid = required_param('blockid', PARAM_INT);
+$id = optional_param('id', 0, PARAM_INT);
 
 error_log("courseid: ".$courseid);
 
@@ -19,16 +20,17 @@ require_login($course);
 
 $PAGE->set_url('/blocks/acclaim/view.php', array('id' => $courseid));
 $PAGE->set_pagelayout('standard');
+$PAGE->set_heading('Acclaim');
+
+$settingsnode = $PAGE->settingsnav->add('acclaim');
+$editurl = new moodle_url('/blocks/acclaim/view.php', array('id' => $id, 'courseid' => $courseid, 'blockid' => $blockid));
+$editnode = $settingsnode->add('Select Badge', $editurl);
+$editnode->make_active();
 
 $acclaim = new acclaim_form();
 
-//if(!empty($blockid)){
 $toform['blockid'] = $blockid;
-//}
-
-//if(!empty($courseid)){
 $toform['courseid'] = $courseid;
-//}
 
 $acclaim->set_data($toform);
 
