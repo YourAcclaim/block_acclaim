@@ -42,6 +42,9 @@ class group_observers {
         $url = get_issue_badge_url();
         $token = get_request_token();
         $return_code = issue_badge_request($data,$url,$token);
+        if($return_code != 201){
+            error_log("failed to issue badge, return code: ".$return_code);
+            }
     }
 }
 
