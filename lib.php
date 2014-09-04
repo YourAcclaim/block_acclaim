@@ -227,5 +227,3 @@ function block_acclaim_images() {
     return build_radio_buttons($json);
 }
 
-?>
-
