@@ -69,9 +69,9 @@ class acclaim_lib_test extends advanced_testcase{
         $event->contextid = "147";
         $event->contextlevel = "50";
         $event->contextinstanceid = "14";
-        $event->userid = $id;
+        $event->userid = 2;
         $event->courseid = "123";
-        $event->relateduserid = "2";
+        $event->relateduserid = $id;
         $event->anonymous = "0";
         $event->timecreated = "1409543537";
         return $event;
