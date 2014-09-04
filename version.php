@@ -17,8 +17,8 @@
 /**
 * Version details
 *
-* @package    block_acclaim_modules
-* @copyright  2014 onwards Yancy Ribbens
+* @package    block_acclaim
+* @copyright  2014 Yancy Ribbens <yancy.ribbens@gmail.com>
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 

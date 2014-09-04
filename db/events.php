@@ -17,9 +17,9 @@
 /**
  * Add event handlers for the quiz
  *
- * @package    mod_acclaim
+ * @package    block_acclaim
  * @category   event
- * @copyright  2014 Yancy Ribbens
+ * @copyright  2014 Yancy Ribbens <yancy.ribbens@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
