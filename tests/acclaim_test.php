@@ -118,6 +118,7 @@ class acclaim_lib_test extends advanced_testcase{
         $dataobject->badgeid = '919309fc-648c-42cb-9415-7f8ecf2f681f';
         $dataobject->courseid = $event->courseid;
         $dataobject->expiration = 0;
+        $dataobject->badgename = "test";
         $DB->insert_record($table, $dataobject, $returnid=true, $bulk=false);
         
         $badge_id = get_badge_info($event->courseid,"badgeid");
@@ -137,6 +138,7 @@ class acclaim_lib_test extends advanced_testcase{
         $dataobject->badgeid = '919309fc-648c-42cb-9415-7f8ecf2f681f';
         $dataobject->courseid = $event->courseid;
         $dataobject->expiration = 1409643600;
+        $dataobject->badgename = "test";
         $DB->insert_record($table, $dataobject, $returnid=true, $bulk=false);
 
         $course = get_block_course($event->courseid);
