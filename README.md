@@ -50,4 +50,21 @@ In addition to configuring the Acclaim plugin, you will also need to configure h
 Further documentation on course completion tracking can be found here:
 https://docs.moodle.org/23/en/Course_completion_settings
 
+Unit Tests
+==========
+This plugin includes unit tests to verify functionality.
+
+<ol>
+  <li>Create env variable named token with value of a valid token on Acclaim. </li>
+  <li> vendor/bin/phpunit my_test_class_name my/tests/filename.php </li>
+</ol>
+
+To Do
+=====
+<ol>
+  <li>The stage environent and org ID is hard coded in the unit tests.  This should be changed to something like a env variable.</li>
+  <li> Allow a course to have a badge set to none (or delete) </li>
+</ol>
+
+
 
