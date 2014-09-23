@@ -56,7 +56,7 @@ This plugin includes unit tests to verify functionality.
 
 <ol>
   <li>Create env variable named token with value of a valid token on Acclaim. </li>
-  <li> vendor/bin/phpunit my_test_class_name my/tests/filename.php </li>
+  <li>vendor/bin/phpunit acclaim_lib_test my/tests/acclaim_test.php </li>
 </ol>
 
 To Do
