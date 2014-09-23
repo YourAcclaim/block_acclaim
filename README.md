@@ -7,13 +7,11 @@ This is a Moodle Block plugin used to issues badges when course is successfully 
 
 Installation
 ============
+To install this block plugin:
 
-Github:
-To install this block plugin, clone this repository and zip it titled acclaim.zip
-
-Moodle:
 <ol>
-  <li>Login as Administrator</li>
+  <li>Clone this repository and zip it titled acclaim.zip</li>
+  <li>Login to Moodle as Administrator</li>
   <li>Navigate to: Site Administration > Plugins > Install Plugins</li>
   <li>Under Plugin type, choose “Block”</li>
   <li>Drag and drop acclaim.zip</li>
