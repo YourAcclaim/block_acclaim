@@ -64,6 +64,7 @@ To Do
 <ol>
   <li>The stage environent and org ID is hard coded in the unit tests.  This should be changed to something like a env variable.</li>
   <li> Allow a course to have a badge set to none (or delete) </li>
+  <li> Create language file so this plugin can be used on platforms other then english</li>
 </ol>
 
 
