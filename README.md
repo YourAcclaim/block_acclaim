@@ -12,16 +12,19 @@ Github:
 To install this block plugin, clone this repository and zip it titled acclaim.zip
 
 Moodle:
-1)	Login as Administrator
-2)	Navigate to: Site Administration > Plugins > Install Plugins
-3)	Under Plugin type, choose “Block”
-4)	Drag and drop acclaim.zip
-5)	Select “Install Plugin From Zip”
-6)	Next, select “Install plugin!”  If all validations pass.
-7)	Choose “Upgrade Moodle database now”.
-8)	Press continue, when prompted to upgrade version.
-9)	Finally, enter the Acclaim URL, your Organization ID and Token
-10)	Lastly, choose “Save changes”.
+<ol>
+  <li>Login as Administrator</li>
+  <li>Navigate to: Site Administration > Plugins > Install Plugins</li>
+  <li>Under Plugin type, choose “Block”</li>
+  <li>Drag and drop acclaim.zip</li>
+  <li>Select “Install Plugin From Zip”</li>
+  <li>Next, select “Install plugin!”  If all validations pass.</li>
+  <li>Choose “Upgrade Moodle database now”.</li>
+  <li>Press continue, when prompted to upgrade version.</li>
+  <li>Finally, enter the Acclaim URL, your Organization ID and Token</li>
+  <li>Lastly, choose “Save changes”.</li>
+</ol>
+
 
 
 
