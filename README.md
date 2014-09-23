@@ -38,6 +38,11 @@ Once the Block Plugin has been installed, you can attach a Badge to any of your 
   <li>Lastly, select “Save Changes”</li>
 </ol>
 
+<b> Additinal Settings: </b><br>
+In addition to configuring the Acclaim plugin, you will also need to configure how a course is successfully completed.
 
-
-
+<ol>
+  <li>First, navigate to Home > Navigation > My Courses > Select Course > Edit Settings</li>
+  <li>Enable completion tracking, and select save.</li>
+  <li>Finally, edit the Criteria that will trigger a course completion.  This can be done by navigating to administration > course administration > select criteria.  For example, course grade.</li>
+</ol>
