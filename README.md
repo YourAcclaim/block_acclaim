@@ -1,6 +1,6 @@
 Description
 ===========
-This is a Moodle Block plugin used to issues badges when course is successfully completed.
+This is a Moodle Block Plugin used to issue Acclaim badges when a course is successfully completed.
 
 Installation
 ============
