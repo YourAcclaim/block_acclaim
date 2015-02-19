@@ -1,13 +1,11 @@
 <?php
 
-$org_id="6bb2e1c7-c66b-4d47-9301-4a6b9e792e2c";
-$url="https://jefferson-staging.herokuapp.com/api/v1/organizations/".$org_id."/badge_templates";
-
 //pass token as argument so it's not in code base
 $username = $argv[1];
 $password = "";
 
 function enum_badges($url,$username,$password){
+    print 'enum badges';
     $ch = curl_init();
 
     $curlConfig = array(
@@ -35,6 +33,4 @@ function unravel($json){
 }
 
 $json = enum_badges($url,$username,$password);
-//file_put_contents('/tmp/dump.txt', print_r($json['data'][0]["image_url"], true));
-unravel($json);
 ?>
