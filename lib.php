@@ -26,12 +26,11 @@ require_once(dirname(__FILE__).'/../../config.php');
 function query_acclaim_api()
 {
     $config = get_config('block_acclaim');
-    $url="{$config->url}/api/v1/organizations/{$config->org}/badge_templates";
+    $url="https://api.{$config->url}/v1/organizations/{$config->org}/badge_templates";
     $username=$config->token;
     $password = "";
     return return_json_badges($url,$username);
 }
-
 
 function truncate($input)
 {
@@ -89,12 +88,11 @@ function write_badge_to_issue($fromform)
 
 function get_issue_badge_url()
 {
-    //https://jefferson-staging.herokuapp.com/api/v1/organizations/6bb2e1c7-c66b-4d47-9301-4a6b9e792e2c/badges
     $block_acclaim_config = get_config('block_acclaim');
     
     $base_url = $block_acclaim_config->url;
     $org_id = $block_acclaim_config->org;
-    $request_url = "{$base_url}/api/v1/organizations/{$org_id}/badges";
+    $request_url = "https://api.{$base_url}/v1/organizations/{$org_id}/badges";
     return $request_url;
 }
 
@@ -167,7 +165,6 @@ function make_curl_request($header_type,$url,$username,$data)
         CURLOPT_POSTFIELDS     => $data,
     );
 
-    //        error_log('curl_array: '. print_r($curlConfig,true));
     curl_setopt_array($ch, $curlConfig);
 
     $result = curl_exec($ch);
@@ -190,7 +187,6 @@ function return_json_badges($url,$username){
     $curlConfig = array(
     CURLOPT_HTTPHEADER     => array('Accept: application/json'),
     CURLOPT_CUSTOMREQUEST  => "GET",
-    CURLOPT_FOLLOWLOCATION => true,
     CURLOPT_URL            => $url,
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_USERPWD        => $username . ":" . $password,
