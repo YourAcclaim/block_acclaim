@@ -35,7 +35,7 @@ Once the Block Plugin has been installed, you can attach a Badge to any of your 
   <li>Lastly, select “Save Changes”</li>
 </ol>
 
-Additinal Settings
+Additional Settings
 ==================
 In addition to configuring the Acclaim plugin, you will also need to configure how a course is successfully completed.
 
@@ -68,4 +68,9 @@ To Do
 </ol>
 
 
-
+Update 20160314
+===============
+<ol>
+  <li>Replaced entering API URL with dropdown with production and sandbox as choices</li>
+  <li>Get all active templates when more than 50 and sorted alphabetically</li>
+</ol>

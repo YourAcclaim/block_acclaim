@@ -23,10 +23,13 @@
 
 require_once(dirname(__FILE__).'/../../config.php');
 
-function query_acclaim_api()
+function query_acclaim_api($customUrl)
 {
     $config = get_config('block_acclaim');
-    $url="https://api.{$config->url}/v1/organizations/{$config->org}/badge_templates";
+    $url="{$config->url}/organizations/{$config->org}/badge_templates?sort=name&filter=state::active";
+    if (!is_null($customUrl)) {
+    	$url = $customUrl;
+    }
     $username=$config->token;
     $password = "";
     return return_json_badges($url,$username);
@@ -34,7 +37,7 @@ function query_acclaim_api()
 
 function truncate($input)
 {
-    $max_length = 18;
+    $max_length = 75;
 
     if(strlen($input) > $max_length){
         $len = strlen($input);
@@ -56,7 +59,7 @@ function get_badge_info($course_id,$field)
     $return_val = "";
 
     $course = $DB->get_record('block_acclaim', array('courseid' => $course_id));
-    
+
     if(!empty($course)){
         $return_val = $course->$field;
     }
@@ -82,17 +85,17 @@ function write_badge_to_issue($fromform)
         if($exists){
         $DB->delete_records_select($table, "courseid = '{$fromform->courseid}'");
     }
-    
+
     return $DB->insert_record('block_acclaim', $fromform);
 }
 
 function get_issue_badge_url()
 {
     $block_acclaim_config = get_config('block_acclaim');
-    
+
     $base_url = $block_acclaim_config->url;
     $org_id = $block_acclaim_config->org;
-    $request_url = "https://api.{$base_url}/v1/organizations/{$org_id}/badges";
+    $request_url = "{$base_url}/organizations/{$org_id}/badges";
     return $request_url;
 }
 
@@ -119,7 +122,7 @@ function update_form_with_badge_name($fromform)
 {
     $all_badges_names = json_decode($fromform->badgename);
     $badge_id = $fromform->badgeid;
-    
+
     if(isset($all_badges_names->$badge_id)){
         $badge_name =  $all_badges_names->$badge_id;
         $fromform->badgename = $badge_name;
@@ -135,7 +138,7 @@ function create_data_array($event,$badge_id,$timestamp){
     $firstname = $user->firstname;
     $lastname = $user->lastname;
     $email = $user->email;
-    $expires_at = convert_time_stamp($timestamp); 
+    $expires_at = convert_time_stamp($timestamp);
     $date_time = convert_time_stamp(time());
 
     $data = array(
@@ -201,25 +204,47 @@ function return_json_badges($url,$username){
     return $json;
 }
 
-function build_radio_buttons($json){
-     $badge_items = "";
+function build_radio_buttons($json, $badge_items){
+     if (isset($json['data'])) {
+     	foreach ($json['data'] as $item) {
+         	$friendly_name = truncate($item["name"]);
+         	$badge_id = $item["id"];
+         	$badge_items[$badge_id] = $friendly_name;
+     	}
+     } else {
+     	error_log("invalid api, token or unable to connect");
+     }
      
-     if(isset($json['data'])){
-         $badge_items = array();
-         foreach($json['data'] as $item){
-             $friendly_name = truncate($item["name"]);
-             $badge_id = $item["id"];
-             $badge_items[$badge_id] = $friendly_name;
-             }
-        }else{
-            error_log("invalid api, token or unable to connect");
-            }
-    return $badge_items;
+     return $badge_items;
 }
 
 
 function block_acclaim_images() {
-    $json = query_acclaim_api();
-    return build_radio_buttons($json);
+	$badge_items = "";
+	$badge_items = array();
+	
+    $json = query_acclaim_api(null);
+    $badge_items = build_radio_buttons($json, $badge_items);
+    
+    $next_page_url = "";
+    if (isset($json['metadata'])) {
+    	$metadata = $json['metadata'];
+    	$next_page_url = $metadata["next_page_url"];
+    	
+    	while (!is_null($next_page_url)) {
+    		$json = query_acclaim_api($next_page_url."&sort=name&filter=state::active");
+    		$badge_items = build_radio_buttons($json, $badge_items);
+    		
+    		if (isset($json['metadata'])) {
+    			$metadata = $json['metadata'];
+    			$next_page_url = $metadata["next_page_url"];
+    			
+    			error_log("\n\nNext page url: ".$next_page_url."\n\n");
+    		}
+    	}
+    }
+    
+    error_log("\n\nBadge items:\n".implode("\n", $badge_items)."\n\n");
+    
+    return $badge_items;
 }
-

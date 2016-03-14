@@ -22,7 +22,9 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-    $settings->add(new admin_setting_configtext( 'block_acclaim/url', 'Domain', 'Example: youracclaim.com', null, PARAM_TEXT));
+	$urls = array("https://api.youracclaim.com/v1" => "Production", "https://sandbox.youracclaim.com/api/v1" => "Sandbox");
+//     $settings->add(new admin_setting_configtext( 'block_acclaim/url', 'Domain', 'Example: youracclaim.com', null, PARAM_TEXT));
+    $settings->add(new admin_setting_configselect( 'block_acclaim/url', 'Domain', 'Production or Sandbox', 0, $urls));
     $settings->add(new admin_setting_configtext( 'block_acclaim/org', 'Organization ID', 'Example: 6bb2e1c7-c66b-4d47-9301-4a6b9e792e2c', null, PARAM_TEXT));
     $settings->add(new admin_setting_configtext( 'block_acclaim/token', 'Token', 'Example: FZ9QZ4sDtEwNR7Tcv-Yi', null, PARAM_TEXT));
 }
