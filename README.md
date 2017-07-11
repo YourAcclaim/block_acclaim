@@ -7,7 +7,7 @@ Installation
 To install this block plugin:
 
 <ol>
-  <li>Clone this repository into a folder called <i>acclaim</i>. </li>
+  <li>Clone this repository</li>
   <li>Remove directory .git and .gitignore </li>
   <li>Zip the repository directory block_acclaim and name acclaim.zip</li>
   <li>Login to Moodle as Administrator</li>
