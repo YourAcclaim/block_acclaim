@@ -20,7 +20,7 @@
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 
-$string['pluginname'] = 'Acclaim block';
+$string['pluginname'] = 'Acclaim';
 $string['acclaim'] = 'Acclaim';
 $string['acclaim:addinstance'] = 'Add a new Acclaim block';
 $string['acclaim:myaddinstance'] = 'Add a new Acclaim block to the My Moodle page';
