@@ -99,12 +99,14 @@ function get_issue_badge_url()
     return $request_url;
 }
 
-function get_request_token(){
+function get_request_token()
+{
     $block_acclaim_config = get_config('block_acclaim');
     return $block_acclaim_config->token;
 }
 
-function return_user($user_id){
+function return_user($user_id)
+{
     global $DB;
     return $DB->get_record('user', array('id'=>$user_id), '*', MUST_EXIST);
 }
@@ -131,7 +133,8 @@ function update_form_with_badge_name($fromform)
     return $fromform;
 }
 
-function create_data_array($event,$badge_id,$timestamp){
+function create_data_array($event,$badge_id,$timestamp)
+{
     $user_id = $event->relateduserid;
     $course_id = $event->courseid;
     $user = return_user($user_id);
@@ -183,7 +186,8 @@ function issue_badge_request($data,$url,$token)
 }
 
 
-function return_json_badges($url,$username){
+function return_json_badges($url,$username)
+{
     $password = "";
     $ch = curl_init();
 
@@ -204,7 +208,8 @@ function return_json_badges($url,$username){
     return $json;
 }
 
-function build_radio_buttons($json, $badge_items){
+function build_radio_buttons($json, $badge_items)
+{
      if (isset($json['data'])) {
      	foreach ($json['data'] as $item) {
          	$friendly_name = truncate($item["name"]);
@@ -219,7 +224,8 @@ function build_radio_buttons($json, $badge_items){
 }
 
 
-function block_acclaim_images() {
+function block_acclaim_images()
+{
 	$badge_items = "";
 	$badge_items = array();
 	
@@ -238,13 +244,8 @@ function block_acclaim_images() {
     		if (isset($json['metadata'])) {
     			$metadata = $json['metadata'];
     			$next_page_url = $metadata["next_page_url"];
-    			
-    			error_log("\n\nNext page url: ".$next_page_url."\n\n");
     		}
     	}
     }
-    
-    error_log("\n\nBadge items:\n".implode("\n", $badge_items)."\n\n");
-    
     return $badge_items;
 }

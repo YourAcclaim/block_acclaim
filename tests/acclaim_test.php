@@ -31,32 +31,11 @@ require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 
 class acclaim_lib_test extends advanced_testcase{
     function setUp(){
-//	global $DB;
 	$this->resetAfterTest(true);
     }
 
-    public function mock_event($id){
-        
-        //[eventname] => \core\event\course_completed
-        //[component] => core
-        //[action] => completed
-        //[target] => course
-        //[objecttable] => course_completions
-        //[objectid] => 23
-        //[crud] => u
-        //[edulevel] => 2
-        //[contextid] => 147
-        //[contextlevel] => 50
-        //[contextinstanceid] => 14
-        //[userid] => 2
-        //[courseid] => 14
-        //[relateduserid] => 2
-        //[anonymous] => 0
-        //[other] => Array
-            //(
-                //[relateduserid] => 2
-            //)
-        //[timecreated] => 1409543537
+    public function mock_event($id)
+    {
         $event = new stdClass();
         $event->eventname = " \core\event\course_completed";
         $event->component = "core";
@@ -79,12 +58,6 @@ class acclaim_lib_test extends advanced_testcase{
 
     private function mock_form()
     {
-        //[badgeid] => 1edb816d-a9fb-445d-b024-bb52075718e5
-        //[expiration] => 0
-        //[blockid] => 
-        //[courseid] => 38
-        //[submitbutton] => Save changes
-
         $badgenames = [
             "123" => "mos",
             "1edb816d-a9fb-445d-b024-bb52075718e5" => "def",
@@ -99,7 +72,6 @@ class acclaim_lib_test extends advanced_testcase{
         $fromform->courseid = "38";
         $fromform->badgename = $json;
         $fromform->submitbutton = "Save changes";
-        
 
         return $fromform;
     }
@@ -127,10 +99,10 @@ class acclaim_lib_test extends advanced_testcase{
 
    public function test_get_course()
    {
-       global $DB;
-       $table = 'block_acclaim';
-       $DB->delete_records($table);
-       $this->assertEmpty($DB->get_records($table));
+        global $DB;
+        $table = 'block_acclaim';
+        $DB->delete_records($table);
+        $this->assertEmpty($DB->get_records($table));
 
         $event = $this->mock_event('2');
 
@@ -158,7 +130,6 @@ class acclaim_lib_test extends advanced_testcase{
        $count = $DB->count_records_select($table, "courseid = '38'");
        
        $this->assertEquals($count,1);
-       //var_dump($fromform);
 
        $result = write_badge_to_issue($fromform);
        $count = $DB->count_records_select($table, "courseid = '38'");
@@ -197,35 +168,7 @@ class acclaim_lib_test extends advanced_testcase{
    public function test_badgename()
    {
        $fromform = $this->mock_form();
-
        $fromform = update_form_with_badge_name($fromform);
-
        $this->assertEquals("def",$fromform->badgename);
-
    }
-
-//cant get this test to work because it is unable to create config_plugin table
-//circle back
-//    public function test_get_issue_badge_url(){
-//        global $DB;
-//        $this->resetAfterTest(false);
- //       $DB->delete_records($table);
-//        $this->assertEmpty($DB->get_records($table));
-//        $dataobject = new stdClass();
-//        $dataobject->plugin = "block_acclaim";
-//        $dataobject->name = "url";
-//        $dataobject->value = "https://jefferson-staging.herokuapp.com";
-        
-//        $dataobject2 = new stdClass();
-//        $dataobject2->plugin = "block_acclaim";
-//        $dataobject2->name = "org";
-//        $dataobject2->value = "6bb2e1c7-c66b-4d47-9301-4a6b9e792e2c";
-
-//        $objects = array($dataobject,$dataobject2);
-
-//        $DB->insert_record($table, $objects);
-
-//        $target_url = "https://jefferson-staging.herokuapp.com/api/v1/organizations/6bb2e1c7-c66b-4d47-9301-4a6b9e792e2c/badges";
-  //      $this->assertEquals($target_url,get_issue_badge_url());
-//    }
 }

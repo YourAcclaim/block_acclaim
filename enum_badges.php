@@ -4,8 +4,8 @@
 $username = $argv[1];
 $password = "";
 
-function enum_badges($url,$username,$password){
-    print 'enum badges';
+function enum_badges($url,$username,$password)
+{
     $ch = curl_init();
 
     $curlConfig = array(
@@ -21,12 +21,12 @@ function enum_badges($url,$username,$password){
     $result = curl_exec($ch);
     $json = json_decode($result,true);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    print $httpCode;
     curl_close($ch);
     return $json;
 }
 
-function unravel($json){
+function unravel($json)
+{
     foreach($json['data'] as $item){
         print_r($item['name']);
     } 

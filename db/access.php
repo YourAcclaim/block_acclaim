@@ -21,7 +21,7 @@
 */
     $capabilities = array(
 
-        // Can edit objectives
+    // Can edit objectives
     'block/acclaim:editbadge' => array(
         'captype' => 'write',
         'riskbitmask' => RISK_SPAM,
@@ -32,7 +32,7 @@
             'manager' => CAP_ALLOW
             )
         ),
-    
+        
     'block/acclaim:myaddinstance' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
@@ -42,7 +42,7 @@
                                                       
         'clonepermissionsfrom' => 'moodle/my:manageblocks'
     ),
-                                                                   
+
     'block/acclaim:addinstance' => array(
         'riskbitmask' => RISK_SPAM | RISK_XSS,
                                                                                 
@@ -52,7 +52,7 @@
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         ),
-                                                                                                                                         
+                                                                                                                                 
         'clonepermissionsfrom' => 'moodle/site:manageblocks'
     ),
 );

@@ -27,16 +27,19 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 
 class block_acclaim extends block_base{
-    public function init(){
+    public function init()
+    {
         $this->title = get_string('acclaim', 'block_acclaim');
     }
 
-    public function has_config() {
+    public function has_config()
+    {
         return true;
     }
 
-    public function specialization() {
-	global $COURSE;
+    public function specialization()
+    {
+	    global $COURSE;
         $course_id = $COURSE->id;
 
         $badge_name = get_badge_info($course_id,"badgename");
@@ -48,41 +51,44 @@ class block_acclaim extends block_base{
         $this->config->text = $badge_name;
     }
 
-    function instance_allow_multiple() {
+    function instance_allow_multiple()
+    {
         return true;
     }
 
-    public function applicable_formats() {
-	return array(
+    public function applicable_formats()
+    {
+	    return array(
            'site-index' => false,
-           'course-view' => true, 
-	   'course-view-social' => false,
+           'course-view' => true,
+           'course-view-social' => false,
            'mod' => false, 
            'mod-quiz' => false
-  	);
+  	    );
     }
 
     public function get_content(){
-	global $COURSE, $DB, $OUTPUT, $CFG, $PAGE;
+        global $COURSE, $DB, $OUTPUT, $CFG, $PAGE;
 
         if ($this->content !== null) {
             return $this->content;
         }
 
         $this->content         =  new stdClass;
-	if (! empty($this->config->text)) {
+	    if (! empty($this->config->text)) {
     	    $this->content->text = $this->config->text;
-	}
+        }
         
-	//$this->content->text   = 'The content of our Acclaim block!';
-        $url = new moodle_url('/blocks/acclaim/view.php', array('blockid' => $this->instance->id, 'courseid' => $COURSE->id));
-	
+        $url = new moodle_url(
+            '/blocks/acclaim/view.php',
+            array('blockid' => $this->instance->id, 'courseid' => $COURSE->id)
+        );
+    
         $context = context_course::instance($COURSE->id);
         if(has_capability('block/acclaim:editbadge', $this->context)){
             $this->content->footer = html_writer::link($url,'Select Badge');
         }
         
-	return $this->content;
+	    return $this->content;
     }
-            
 }
