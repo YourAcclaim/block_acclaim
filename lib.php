@@ -226,8 +226,8 @@ function build_radio_buttons($json, $badge_items)
 
 function block_acclaim_images()
 {
-	$badge_items = "";
-	$badge_items = array();
+    $badge_items = "";
+    $badge_items = array();
 	
     $json = query_acclaim_api(null);
     $badge_items = build_radio_buttons($json, $badge_items);

@@ -39,7 +39,7 @@ class block_acclaim extends block_base{
 
     public function specialization()
     {
-	    global $COURSE;
+        global $COURSE;
         $course_id = $COURSE->id;
 
         $badge_name = get_badge_info($course_id,"badgename");
@@ -88,7 +88,6 @@ class block_acclaim extends block_base{
         if(has_capability('block/acclaim:editbadge', $this->context)){
             $this->content->footer = html_writer::link($url,'Select Badge');
         }
-        
-	    return $this->content;
+        return $this->content;
     }
 }
