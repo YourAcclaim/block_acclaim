@@ -24,7 +24,7 @@ defined('MOODLE_INTERNAL') || die;
 if ($ADMIN->fulltree) {
     $urls = array(
         "https://api.youracclaim.com/v1" => "Production",
-        "https://sandbox.youracclaim.com/api/v1" => "Sandbox"
+        "https://sandbox-api.youracclaim.com/v1" => "Sandbox"
     );
 
     $settings->add(
