@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 class group_observers {
     public static function issue_badge($event)
     {
-	    global $DB;
+        global $DB;
         $course = get_block_course($event->courseid);
         $expires_timestamp = "";
         
