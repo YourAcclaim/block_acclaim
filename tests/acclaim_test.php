@@ -93,7 +93,7 @@ class acclaim_lib_test extends advanced_testcase{
         $dataobject->badgename = "test";
         $DB->insert_record($table, $dataobject, $returnid=true, $bulk=false);
         
-        $badge_id = get_badge_info($event->courseid,"badgeid");
+        $badge_id = block_acclaim_get_badge_info($event->courseid,"badgeid");
         $this->assertEquals($dataobject->badgeid,$badge_id);
    }
 
@@ -113,7 +113,7 @@ class acclaim_lib_test extends advanced_testcase{
         $dataobject->badgename = "test";
         $DB->insert_record($table, $dataobject, $returnid=true, $bulk=false);
 
-        $course = get_block_course($event->courseid);
+        $course = block_acclaim_get_block_course($event->courseid);
         $this->assertEquals($dataobject->expiration,$course->expiration);
         $this->assertEquals($dataobject->badgeid,$course->badgeid);
    }
@@ -126,12 +126,12 @@ class acclaim_lib_test extends advanced_testcase{
        $this->assertEmpty($DB->get_records($table));
        $fromform = $this->mock_form();
 
-       $result = write_badge_to_issue($fromform);
+       $result = block_acclaim_write_badge_to_issue($fromform);
        $count = $DB->count_records_select($table, "courseid = '38'");
        
        $this->assertEquals($count,1);
 
-       $result = write_badge_to_issue($fromform);
+       $result = block_acclaim_write_badge_to_issue($fromform);
        $count = $DB->count_records_select($table, "courseid = '38'");
 
        $this->assertEquals($count,1);
@@ -140,7 +140,7 @@ class acclaim_lib_test extends advanced_testcase{
    public function test_create_array()
    {
         $badge_id = "123";
-        $data = create_data_array($this->mock_event('2'),$badge_id,"",'1');
+        $data = block_acclaim_create_data_array($this->mock_event('2'),$badge_id,"",'1');
         $is_set = isset($data);
         $this->assertEquals(true,$is_set);
    }
@@ -150,25 +150,25 @@ class acclaim_lib_test extends advanced_testcase{
        global $DB;
        $user = $this->getDataGenerator()->create_user(array('email'=>'user1@example.com', 'username'=>'user1'));
        $id = $user->id;
-        
+
        $event = $this->mock_event($id);
        $badge_id = '3c7e3eb5-0e41-445a-a4e2-32d539543ab6';
        $timestamp = '1409647800';
        $expiration = $timestamp;
-       
+
        $data = create_data_array($event,$badge_id,$expiration);
 
        $target_url = "https://jefferson-staging.herokuapp.com/api/v1/organizations/6bb2e1c7-c66b-4d47-9301-4a6b9e792e2c/badges";
 
        $token = getenv('token');
-       $return_code = issue_badge_request($data,$target_url,$token);
+       $return_code = block_acclaim_issue_badge_request($data,$target_url,$token);
        $this->assertEquals(201,$return_code);
    }
 
    public function test_badgename()
    {
        $fromform = $this->mock_form();
-       $fromform = update_form_with_badge_name($fromform);
+       $fromform = block_acclaim_update_form_with_badge_name($fromform);
        $this->assertEquals("def",$fromform->badgename);
    }
 }

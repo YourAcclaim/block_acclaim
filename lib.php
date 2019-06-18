@@ -23,19 +23,19 @@
 
 require_once(dirname(__FILE__).'/../../config.php');
 
-function query_acclaim_api($customUrl)
+function block_acclaim_query_acclaim_api($customUrl)
 {
     $config = get_config('block_acclaim');
     $url="{$config->url}/organizations/{$config->org}/badge_templates?sort=name&filter=state::active";
     if (!is_null($customUrl)) {
-    	$url = $customUrl;
+       $url = $customUrl;
     }
     $username=$config->token;
     $password = "";
-    return return_json_badges($url,$username);
+    return block_acclaim_return_json_badges($url,$username);
 }
 
-function truncate($input)
+function block_acclaim_truncate($input)
 {
     $max_length = 75;
 
@@ -48,12 +48,7 @@ function truncate($input)
     return $input;
 }
 
-function test_the_test()
-{
-    return "test";
-}
-
-function get_badge_info($course_id,$field)
+function block_acclaim_get_badge_info($course_id,$field)
 {
     global $DB;
     $return_val = "";
@@ -67,19 +62,19 @@ function get_badge_info($course_id,$field)
     return $return_val;
 }
 
-function get_block_course($course_id)
+function block_acclaim_get_block_course($course_id)
 {
     global $DB;
     $course = $DB->get_record('block_acclaim', array('courseid' => $course_id), '*', MUST_EXIST);
     return $course;
 }
 
-function write_badge_to_issue($fromform)
+function block_acclaim_write_badge_to_issue($fromform)
 {
     global $DB;
     $table = 'block_acclaim';
 
-    $fromform = update_form_with_badge_name($fromform);
+    $fromform = block_acclaim_update_form_with_badge_name($fromform);
 
     $exists = $DB->record_exists_select($table, "courseid = '{$fromform->courseid}'");
         if($exists){
@@ -89,7 +84,7 @@ function write_badge_to_issue($fromform)
     return $DB->insert_record('block_acclaim', $fromform);
 }
 
-function get_issue_badge_url()
+function block_acclaim_get_issue_badge_url()
 {
     $block_acclaim_config = get_config('block_acclaim');
 
@@ -99,19 +94,19 @@ function get_issue_badge_url()
     return $request_url;
 }
 
-function get_request_token()
+function block_acclaim_get_request_token()
 {
     $block_acclaim_config = get_config('block_acclaim');
     return $block_acclaim_config->token;
 }
 
-function return_user($user_id)
+function block_acclaim_return_user($user_id)
 {
     global $DB;
     return $DB->get_record('user', array('id'=>$user_id), '*', MUST_EXIST);
 }
 
-function convert_time_stamp($timestamp)
+function block_acclaim_convert_time_stamp($timestamp)
 {
     if($timestamp){
         return gmdate("Y-m-d  h:i:s a", $timestamp);
@@ -120,7 +115,7 @@ function convert_time_stamp($timestamp)
     return $timestamp;
 }
 
-function update_form_with_badge_name($fromform)
+function block_acclaim_update_form_with_badge_name($fromform)
 {
     $all_badges_names = json_decode($fromform->badgename);
     $badge_id = $fromform->badgeid;
@@ -133,16 +128,17 @@ function update_form_with_badge_name($fromform)
     return $fromform;
 }
 
-function create_data_array($event,$badge_id,$timestamp)
+
+function block_acclaim_create_data_array($event,$badge_id,$timestamp)
 {
     $user_id = $event->relateduserid;
     $course_id = $event->courseid;
-    $user = return_user($user_id);
+    $user = block_acclaim_return_user($user_id);
     $firstname = $user->firstname;
     $lastname = $user->lastname;
     $email = $user->email;
-    $expires_at = convert_time_stamp($timestamp);
-    $date_time = convert_time_stamp(time());
+    $expires_at = block_acclaim_convert_time_stamp($timestamp);
+    $date_time = block_acclaim_convert_time_stamp(time());
 
     $data = array(
         'badge_template_id' => $badge_id,
@@ -156,7 +152,7 @@ function create_data_array($event,$badge_id,$timestamp)
     return $data;
 }
 
-function make_curl_request($header_type,$url,$username,$data)
+function block_acclaim_make_curl_request($header_type,$url,$username,$data)
 {
     $ch = curl_init();
     $password = "";
@@ -179,14 +175,13 @@ function make_curl_request($header_type,$url,$username,$data)
     return $httpCode;
 }
 
-function issue_badge_request($data,$url,$token)
+function block_acclaim_issue_badge_request($data,$url,$token)
 {
     $header = "POST";
-    return make_curl_request($header,$url,$token,$data);
+    return block_acclaim_make_curl_request($header,$url,$token,$data);
 }
 
-
-function return_json_badges($url,$username)
+function block_acclaim_return_json_badges($url,$username)
 {
     $password = "";
     $ch = curl_init();
@@ -208,11 +203,11 @@ function return_json_badges($url,$username)
     return $json;
 }
 
-function build_radio_buttons($json, $badge_items)
+function block_acclaim_build_radio_buttons($json, $badge_items)
 {
      if (isset($json['data'])) {
      	foreach ($json['data'] as $item) {
-         	$friendly_name = truncate($item["name"]);
+         	$friendly_name = block_acclaim_truncate($item["name"]);
          	$badge_id = $item["id"];
          	$badge_items[$badge_id] = $friendly_name;
      	}
@@ -229,8 +224,8 @@ function block_acclaim_images()
     $badge_items = "";
     $badge_items = array();
 	
-    $json = query_acclaim_api(null);
-    $badge_items = build_radio_buttons($json, $badge_items);
+    $json = block_acclaim_query_acclaim_api(null);
+    $badge_items = block_acclaim_build_radio_buttons($json, $badge_items);
     
     $next_page_url = "";
     if (isset($json['metadata'])) {
@@ -238,8 +233,8 @@ function block_acclaim_images()
     	$next_page_url = $metadata["next_page_url"];
     	
     	while (!is_null($next_page_url)) {
-    		$json = query_acclaim_api($next_page_url."&sort=name&filter=state::active");
-    		$badge_items = build_radio_buttons($json, $badge_items);
+    		$json = block_acclaim_query_acclaim_api($next_page_url."&sort=name&filter=state::active");
+    		$badge_items = block_acclaim_build_radio_buttons($json, $badge_items);
     		
     		if (isset($json['metadata'])) {
     			$metadata = $json['metadata'];
