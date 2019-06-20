@@ -162,13 +162,13 @@ function make_curl_request($header_type,$url,$username,$data)
     $password = "";
 
     $curlConfig = array(
-        CURLOPT_HTTPHEADER     => array('Accept: application/json'),
+        CURLOPT_HTTPHEADER     => array('Content-Type: application/json'),
         CURLOPT_CUSTOMREQUEST  => $header_type,
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_URL            => $url,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_USERPWD        => $username . ":" . $password,
-        CURLOPT_POSTFIELDS     => $data,
+        CURLOPT_USERPWD        => $username . ":",
+        CURLOPT_POSTFIELDS     => json_encode($data),
     );
 
     curl_setopt_array($ch, $curlConfig);

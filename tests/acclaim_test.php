@@ -147,22 +147,23 @@ class acclaim_lib_test extends advanced_testcase{
 
    public function test_issue_badge()
    {
-       global $DB;
-       $user = $this->getDataGenerator()->create_user(array('email'=>'user1@example.com', 'username'=>'user1'));
-       $id = $user->id;
+      global $DB;
+      $word = array_merge(range('a', 'z'), range('A', 'Z'));
+      shuffle($word);
+      $rand_word = substr(implode($word), 0, 10);
+      $user = $this->getDataGenerator()->create_user(array('email'=>$rand_word."@moodle.com"));
+      $id = $user->id;
         
-       $event = $this->mock_event($id);
-       $badge_id = '3c7e3eb5-0e41-445a-a4e2-32d539543ab6';
-       $timestamp = '1409647800';
-       $expiration = $timestamp;
+      $event = $this->mock_event($id);
+      $badge_id = 'fc509375-3a4b-4b9e-b0b3-3e4ad784e545';
        
-       $data = create_data_array($event,$badge_id,$expiration);
+      $data = create_data_array($event,$badge_id,'');
 
-       $target_url = "https://jefferson-staging.herokuapp.com/api/v1/organizations/6bb2e1c7-c66b-4d47-9301-4a6b9e792e2c/badges";
+      $target_url = "https://jefferson-staging.herokuapp.com/api/v1/organizations//a568b3cd-72a3-4312-9423-bb23b13d9d6a/badges";
 
-       $token = getenv('token');
-       $return_code = issue_badge_request($data,$target_url,$token);
-       $this->assertEquals(201,$return_code);
+      $token = getenv('token');
+      $return_code = issue_badge_request($data,$target_url,$token);
+      $this->assertEquals(201,$return_code);
    }
 
    public function test_badgename()
