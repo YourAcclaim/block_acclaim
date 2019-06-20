@@ -21,7 +21,6 @@
 */
     $capabilities = array(
 
-    // Can edit objectives
     'block/acclaim:editbadge' => array(
         'captype' => 'write',
         'riskbitmask' => RISK_SPAM,
