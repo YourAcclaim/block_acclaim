@@ -48,11 +48,6 @@ function truncate($input)
     return $input;
 }
 
-function test_the_test()
-{
-    return "test";
-}
-
 function get_badge_info($course_id,$field)
 {
     global $DB;
