@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 
 class group_observers {
-    public static function issue_badge($event)
+    public static function block_acclaim_issue_badge($event)
     {
         global $DB;
         $course = block_acclaim_get_block_course($event->courseid);
