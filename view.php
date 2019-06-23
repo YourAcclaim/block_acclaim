@@ -23,7 +23,7 @@
 */
 
 require_once('../../config.php');
-require_once('acclaim_form.php');
+require_once('block_acclaim_form.php');
 require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 
 global $DB, $OUTPUT, $PAGE;
@@ -49,7 +49,7 @@ $editurl = new moodle_url('/blocks/acclaim/view.php', array('id' => $id, 'course
 $editnode = $settingsnode->add('Select Badge', $editurl);
 $editnode->make_active();
 
-$acclaim = new acclaim_form();
+$acclaim = new block_acclaim_form();
 
 $toform['blockid'] = $blockid;
 $toform['courseid'] = $courseid;
