@@ -42,7 +42,7 @@ class block_acclaim extends block_base{
         global $COURSE;
         $course_id = $COURSE->id;
 
-        $badge_name = get_badge_info($course_id,"badgename");
+        $badge_name = block_acclaim_get_badge_info($course_id,"badgename");
         
         if($badge_name == ""){
             $badge_name = "No Badge Selected";
