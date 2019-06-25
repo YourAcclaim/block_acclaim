@@ -134,7 +134,7 @@ class acclaim_lib_test extends advanced_testcase{
        $result = block_acclaim_write_badge_to_issue($fromform);
        $count = $DB->count_records_select($table, "courseid = '38'");
 
-       $this->assertEquals($count,1);
+       $this->assertEquals(1,$count);
    }
 
    public function test_create_array()
