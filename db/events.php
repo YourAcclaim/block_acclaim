@@ -29,6 +29,6 @@ defined('MOODLE_INTERNAL') || die();
 $observers = array(
     array(
         'eventname' => '\core\event\course_completed',
-        'callback' => '\block_acclaim\group_observers::issue_badge',
+        'callback' => '\block_acclaim\group_observers::block_acclaim_issue_badge',
     ),
 );

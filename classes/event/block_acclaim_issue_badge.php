@@ -23,7 +23,7 @@
 namespace block_acclaim\event;
 defined('MOODLE_INTERNAL') || die();
 
-class issue_badge extends \core\event\base {
+class block_acclaim_issue_badge extends \core\event\base {
     protected function init()
     {
         $this->data['crud'] = 'c'; // c(reate), r(ead), u(pdate), d(elete)

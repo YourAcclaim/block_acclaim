@@ -23,7 +23,7 @@
 */
 
 require_once('../../config.php');
-require_once('acclaim_form.php');
+require_once('block_acclaim_form.php');
 require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 
 global $DB, $OUTPUT, $PAGE;
@@ -49,7 +49,7 @@ $editurl = new moodle_url('/blocks/acclaim/view.php', array('id' => $id, 'course
 $editnode = $settingsnode->add('Select Badge', $editurl);
 $editnode->make_active();
 
-$acclaim = new acclaim_form();
+$acclaim = new block_acclaim_form();
 
 $toform['blockid'] = $blockid;
 $toform['courseid'] = $courseid;
@@ -62,7 +62,7 @@ if($acclaim->is_cancelled()) {
 } else if ($fromform = $acclaim->get_data()) {
     $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
     // We need to add code to appropriately act on and store the submitted data
-    if (!write_badge_to_issue($fromform)) {
+    if (!block_acclaim_write_badge_to_issue($fromform)) {
         print_error('inserterror', 'block_acclaim');
     }
     redirect($courseurl);

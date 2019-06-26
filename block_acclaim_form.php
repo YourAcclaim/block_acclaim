@@ -24,7 +24,7 @@
 require_once("{$CFG->libdir}/formslib.php");
 require_once($CFG->dirroot.'/blocks/acclaim/lib.php');
 
-class acclaim_form extends moodleform {
+class block_acclaim_form extends moodleform {
 
     function definition()
     {
