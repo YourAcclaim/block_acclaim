@@ -72,14 +72,9 @@ function block_acclaim_get_block_course($course_id)
 function block_acclaim_write_badge_to_issue($fromform)
 {
     global $DB;
-    $table = 'block_acclaim';
 
     $fromform = block_acclaim_update_form_with_badge_name($fromform);
-
-    $exists = $DB->record_exists_select($table, "courseid = '{$fromform->courseid}'");
-        if($exists){
-        $DB->delete_records_select($table, "courseid = '{$fromform->courseid}'");
-    }
+    $DB->delete_records('block_acclaim',  array('courseid' => $fromform->courseid));
 
     return $DB->insert_record('block_acclaim', $fromform);
 }
