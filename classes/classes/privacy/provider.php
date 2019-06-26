@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -13,15 +14,27 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-/**
+          
+/**      
 * @package    block_acclaim
 * @copyright  2014 Yancy Ribbens <yancy.ribbens@gmail.com>
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 
-$string['pluginname'] = 'Acclaim';
-$string['acclaim'] = 'Acclaim';
-$string['acclaim:addinstance'] = 'Add a new Acclaim block';
-$string['acclaim:myaddinstance'] = 'Add a new Acclaim block to the My Moodle page';
-$string['privacy:metadata'] = 'The Acclaim block only only stores course and badge_template details';
+namespace block_acclaim\privacy;
+defined('MOODLE_INTERNAL') || die();
+
+final class provider implements
+    // This plugin does not store any personal user data.
+    \core_privacy\local\metadata\null_provider {
+ 
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}
