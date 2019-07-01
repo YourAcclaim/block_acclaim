@@ -47,6 +47,7 @@ class block_acclaim extends block_base{
         if($badge_name == ""){
             $badge_name = "No Badge Selected";
         }
+        $this->config = new stdClass;
 
         $this->config->text = $badge_name;
     }
