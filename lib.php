@@ -32,7 +32,8 @@ function block_acclaim_query_acclaim_api($customUrl)
     }
     $username=$config->token;
     $password = "";
-    return block_acclaim_return_json_badges($url,$username);
+    $curl = new curl;
+    return block_acclaim_return_json_badges($curl, $url, $username);
 }
 
 function block_acclaim_truncate($input)
@@ -146,75 +147,39 @@ function block_acclaim_create_data_array($event,$badge_id,$timestamp)
     return $data;
 }
 
-function block_acclaim_make_curl_request($header_type,$url,$username,$data)
+function block_acclaim_issue_badge_request($data, $url, $username)
 {
-    $ch = curl_init();
-    $password = "";
-
-    $curlConfig = array(
-        CURLOPT_HTTPHEADER     => array('Content-Type: application/json'),
-        CURLOPT_CUSTOMREQUEST  => $header_type,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_URL            => $url,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_USERPWD        => $username . ":",
-        CURLOPT_POSTFIELDS     => json_encode($data),
-    );
-
-    curl_setopt_array($ch, $curlConfig);
-
-    $result = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    return $httpCode;
+    $curl = new curl;
+    $curl->post($url, $data, array( "CURLOPT_USERPWD" => $username . ":" ));
+    return $curl->info["http_code"];
 }
 
-function block_acclaim_issue_badge_request($data,$url,$token)
+function block_acclaim_return_json_badges($curl, $url, $token)
 {
-    $header = "POST";
-    return block_acclaim_make_curl_request($header,$url,$token,$data);
-}
+    $params = array("sort" => "name", "filter" => "state::active");
+    $options = array("CURLOPT_USERPWD" => $token . ":");
 
-function block_acclaim_return_json_badges($url,$username)
-{
-    $password = "";
-    $ch = curl_init();
-
-    $curlConfig = array(
-    CURLOPT_HTTPHEADER     => array('Accept: application/json'),
-    CURLOPT_CUSTOMREQUEST  => "GET",
-    CURLOPT_URL            => $url,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_USERPWD        => $username . ":" . $password,
-                                                                                                            );
-    curl_setopt_array($ch, $curlConfig);
-
-    $result = curl_exec($ch);
-    $json = json_decode($result,true);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-
-    return $json;
+    $http = $curl->get($url, $params, $options);
+    return $http;
 }
 
 function block_acclaim_build_radio_buttons($json, $badge_items)
 {
-     if (isset($json['data'])) {
-     	foreach ($json['data'] as $item) {
-                $friendly_name = block_acclaim_truncate($item["name"]);
-         	$badge_id = $item["id"];
-         	$badge_items[$badge_id] = $friendly_name;
-     	}
-     } else {
-     	error_log("invalid api, token or unable to connect");
-     }
-     
-     return $badge_items;
+    $arr = json_decode($json, true);
+    if (isset($arr['data'])) {
+        foreach ($arr['data'] as $item) {
+            $friendly_name = block_acclaim_truncate($item["name"]);
+            $badge_id = $item["id"];
+            $badge_items[$badge_id] = $friendly_name;
+        }
+    } else {
+        error_log("invalid api, token or unable to connect");
+    }
+    return $badge_items;
 }
 
 function block_acclaim_images()
 {
-    $badge_items = "";
     $badge_items = array();
 	
     $json = block_acclaim_query_acclaim_api(null);

@@ -76,7 +76,6 @@ class acclaim_lib_test extends advanced_testcase{
         return $fromform;
     }
 
-
     public function test_get_badge_id()
     {
         global $DB;
@@ -145,25 +144,55 @@ class acclaim_lib_test extends advanced_testcase{
         $this->assertEquals(true,$is_set);
    }
 
-   public function test_issue_badge()
+   public function test_build_radio_buttons()
    {
-      global $DB;
-      $word = array_merge(range('a', 'z'), range('A', 'Z'));
-      shuffle($word);
-      $rand_word = substr(implode($word), 0, 10);
-      $user = $this->getDataGenerator()->create_user(array('email'=>$rand_word."@moodle.com"));
-      $id = $user->id;
-        
-      $event = $this->mock_event($id);
-      $badge_id = 'fc509375-3a4b-4b9e-b0b3-3e4ad784e545';
-       
-      $data = block_acclaim_create_data_array($event,$badge_id,'');
+        $badge_items = array();
+        $json = json_encode(array('data' => array(0 => array('id' => 1, 'name' => 'johnny'))));
+        $badge_items = block_acclaim_build_radio_buttons($json, $badge_items);
+        $this->assertEquals(array( 1 => "johnny"), $badge_items);
+   }
 
-      $target_url = "https://jefferson-staging.herokuapp.com/api/v1/organizations//a568b3cd-72a3-4312-9423-bb23b13d9d6a/badges";
+   //TODO passing in curl connection breaks group observer when curl runs, however,
+   // the mock in this test requires the curl connection to be passed.  Either mock the class
+   // or update how cron uses curl.
+   //
+   //public function test_issue_badge()
+   //{
+      //$data = 'data';
+      //$url = 'url';
+      //$token = 'token';
 
-      $token = getenv('token');
-      $return_code = block_acclaim_issue_badge_request($data,$target_url,$token);
-      $this->assertEquals(201,$return_code);
+      //$mock_curl = $this->getMockBuilder(curl::class)
+                        //->setMethods(['post'])
+                        //->getMock();
+
+      //$mock_curl->info = array("http_code" => 418);
+      //$mock_curl->expects($this->once())
+                //->method('post')
+                //->with(
+                    //'url',
+                    //$data,
+                    //array("CURLOPT_USERPWD" => "token:"));
+      //$return_code = block_acclaim_issue_badge_request($mock_curl, $data, $url, $token);
+      //$this->assertEquals(418, $return_code);
+   //}
+
+   public function test_get_badges()
+   {
+        $url = 'url';
+        $token = 'token';
+        $mock_response = json_encode(array("bogus" => "data"));
+
+        $mock_curl = $this->createMock(curl::class);
+        $mock_curl->method("get")
+                  ->with(
+                    'url',
+                    array("sort" => "name", "filter" => "state::active"),
+                    array("CURLOPT_USERPWD" => "token:"))
+                 ->willReturn($mock_response);
+
+        $response = block_acclaim_return_json_badges($mock_curl, $url, $token);
+        $this->assertEquals($mock_response, $response);
    }
 
    public function test_badgename()
