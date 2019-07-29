@@ -15,15 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
-* Version details
-*
-* @package    block_acclaim
-* @copyright  2014 Yancy Ribbens <yancy.ribbens@gmail.com>
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * Scheduled task to issue badges
+ *
+ * @package    block_acclaim
+ * @copyright  2014 Yancy Ribbens <yancy.ribbens@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2014082511;  // YYYYMMDDHH (year, month, day, 24-hr time)
-$plugin->requires  = 2014050800;        // Requires this Moodle version
-$plugin->component = 'block_acclaim'; // Full name of the plugin (used for diagnostics)
+$tasks = [
+    [
+        'classname' => 'block_acclaim\task\issue_badges',
+        'blocking' => 0,
+        'minute' => '*/5',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+    ],
+];

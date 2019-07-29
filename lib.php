@@ -124,33 +124,79 @@ function block_acclaim_update_form_with_badge_name($fromform)
     return $fromform;
 }
 
-function block_acclaim_create_data_array($event,$badge_id,$timestamp)
+function block_acclaim_create_pending_badge($event)
+{
+    global $DB;
+    $course = block_acclaim_get_block_course($event->courseid);
+    $pending_badge = block_acclaim_create_pending_badge_obj($event, $course);
+    $DB->insert_record('block_acclaim_pending_badges', $pending_badge);
+}
+
+function block_acclaim_create_pending_badge_obj($event, $course)
 {
     $user_id = $event->relateduserid;
+    $badge_template_id = $course->badgeid;
     $course_id = $event->courseid;
     $user = block_acclaim_return_user($user_id);
     $firstname = $user->firstname;
     $lastname = $user->lastname;
     $email = $user->email;
-    $expires_at = block_acclaim_convert_time_stamp($timestamp);
-    $date_time = block_acclaim_convert_time_stamp(time());
 
-    $data = array(
-        'badge_template_id' => $badge_id,
-        'issued_to_first_name' => $firstname,
-        'issued_to_last_name' => $lastname,
-        'expires_at' => $expires_at,
-        'recipient_email' => $email,
-        'issued_at' => $date_time
-    );
+    $expires_at = "";
+    if($course->expiration){
+        $expires_at = block_acclaim_convert_time_stamp(
+            $course->expiration
+        );
+    }
 
-    return $data;
+    $pending_badge = new stdClass();
+    $pending_badge->badgetemplateid = $badge_template_id;
+    $pending_badge->firstname = $firstname;
+    $pending_badge->lastname = $lastname;
+    $pending_badge->expiration = $expires_at;
+    $pending_badge->recipientemail = $email;
+
+    return $pending_badge;
 }
 
-function block_acclaim_issue_badge_request($data, $url, $username)
-{
-    $curl = new curl;
-    $curl->post($url, $data, array( "CURLOPT_USERPWD" => $username . ":" ));
+function block_acclaim_issue_badge($curl, $time, $url, $token){
+    global $DB;
+
+    $datetime = block_acclaim_convert_time_stamp($time);
+
+    $pending_badges = $DB->get_records('block_acclaim_pending_badges');
+
+	foreach ($pending_badges as &$badge) {
+
+        $payload = [
+            'badge_template_id' => $badge->badgetemplateid,
+            'issued_to_first_name' => $badge->firstname,
+            'issued_to_last_name' => $badge->lastname,
+            'recipient_email' => $badge->recipientemail,
+            'issued_at' => $datetime
+        ];
+
+        $curl->post(
+            $url, $payload, array( "CURLOPT_USERPWD" => $token. ":" )
+        );
+
+        if ($curl->info["http_code"] == 201) {
+            // The badge has been issued so we remove it from pending.
+            $DB->delete_records('block_acclaim_pending_badges',  array('id' => $badge->id));
+        } elseif ($curl->info["http_code"] == 422) {
+            // Acclaim can not issue the badge so we remove this from pending
+            // so it will not try again.  This could happen for example if the
+            // user already has been issued a badge.
+            error_log(print_r($curl->response, true));
+            $DB->delete_records('block_acclaim_pending_badges',  array('id' => $badge->id));
+        } else {
+            // some other issue is preventing the badge from being issued
+            // for example site down or token incorrectly entered.  The
+            // record is left as pending to try again in the future.
+            error_log(print_r($curl->response, true));
+        }
+    };
+
     return $curl->info["http_code"];
 }
 

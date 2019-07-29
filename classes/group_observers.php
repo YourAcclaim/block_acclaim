@@ -28,23 +28,9 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 
 class group_observers {
-    public static function block_acclaim_issue_badge($event)
+    public static function block_acclaim_create_pending_badge($event)
     {
-        global $DB;
-        $course = block_acclaim_get_block_course($event->courseid);
-        $expires_timestamp = "";
-        
-        if($course->expiration){
-            $expires_timestamp = $course->expiration;
-        }
-
-        $data = block_acclaim_create_data_array($event, $course->badgeid, $expires_timestamp);
-        $url = block_acclaim_get_issue_badge_url();
-        $token = block_acclaim_get_request_token();
-        $return_code = block_acclaim_issue_badge_request($data, $url, $token);
-        if($return_code != 201){
-            error_log("failed to issue badge, return code: ".$return_code);
-        }
+        block_acclaim_create_pending_badge($event);
     }
 }
 
