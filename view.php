@@ -32,8 +32,6 @@ $courseid = required_param('courseid', PARAM_INT);
 $blockid = required_param('blockid', PARAM_INT);
 $id = optional_param('id', 0, PARAM_INT);
 
-error_log("courseid: ".$courseid);
-
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('invalidcourse', 'block_acclaim', $courseid);
 }
