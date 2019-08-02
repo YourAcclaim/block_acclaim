@@ -54,7 +54,7 @@ function block_acclaim_get_badge_info($course_id,$field)
     global $DB;
     $return_val = "";
 
-    $course = $DB->get_record('block_acclaim', array('courseid' => $course_id));
+    $course = $DB->get_record('block_acclaim_courses', array('courseid' => $course_id));
 
     if(!empty($course)){
         $return_val = $course->$field;
@@ -66,7 +66,7 @@ function block_acclaim_get_badge_info($course_id,$field)
 function block_acclaim_get_block_course($course_id)
 {
     global $DB;
-    $course = $DB->get_record('block_acclaim', array('courseid' => $course_id), '*', MUST_EXIST);
+    $course = $DB->get_record('block_acclaim_courses', array('courseid' => $course_id), '*', MUST_EXIST);
     return $course;
 }
 
@@ -75,9 +75,9 @@ function block_acclaim_write_badge_to_issue($fromform)
     global $DB;
 
     $fromform = block_acclaim_update_form_with_badge_name($fromform);
-    $DB->delete_records('block_acclaim',  array('courseid' => $fromform->courseid));
+    $DB->delete_records('block_acclaim_courses',  array('courseid' => $fromform->courseid));
 
-    return $DB->insert_record('block_acclaim', $fromform);
+    return $DB->insert_record('block_acclaim_courses', $fromform);
 }
 
 function block_acclaim_get_issue_badge_url()

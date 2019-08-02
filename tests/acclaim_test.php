@@ -120,7 +120,7 @@ class acclaim_lib_test extends advanced_testcase{
     public function test_get_badge_id()
     {
         global $DB;
-        $table = 'block_acclaim';
+        $table = 'block_acclaim_courses';
         $DB->delete_records($table);
         $this->assertEmpty($DB->get_records($table));
 
@@ -140,7 +140,7 @@ class acclaim_lib_test extends advanced_testcase{
    public function test_get_course()
    {
         global $DB;
-        $table = 'block_acclaim';
+        $table = 'block_acclaim_courses';
         $DB->delete_records($table);
         $this->assertEmpty($DB->get_records($table));
 
@@ -161,7 +161,7 @@ class acclaim_lib_test extends advanced_testcase{
    public function test_write_block_record()
    {
        global $DB;
-       $table = 'block_acclaim';
+       $table = 'block_acclaim_courses';
        $DB->delete_records($table);
        $this->assertEmpty($DB->get_records($table));
        $fromform = $this->mock_form();
@@ -196,7 +196,7 @@ class acclaim_lib_test extends advanced_testcase{
         $dataobject->courseid = $event->courseid;
         $dataobject->expiration = 0;
         $dataobject->badgename = "test";
-        $DB->insert_record('block_acclaim', $dataobject, $returnid=true, $bulk=false);
+        $DB->insert_record('block_acclaim_courses', $dataobject, $returnid=true, $bulk=false);
 
         $count = $DB->count_records('block_acclaim_pending_badges');
         $this->assertEquals(0, $count);
