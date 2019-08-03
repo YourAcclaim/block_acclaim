@@ -34,8 +34,15 @@ class acclaim_lib_test extends advanced_testcase{
         $this->resetAfterTest(true);
     }
 
-    public function mock_event($id)
+    public function mock_event()
     {
+        global $DB;
+        $user = new stdClass();
+        $user->firstname = "Richard";
+        $user->lastname = "Kimble";
+        $user->email = "richard.kimble@fugative.me";
+        $user_id = $DB->insert_record('user', $user);
+
         $event = new stdClass();
         $event->eventname = " \core\event\course_completed";
         $event->component = "core";
@@ -49,14 +56,14 @@ class acclaim_lib_test extends advanced_testcase{
         $event->contextlevel = "50";
         $event->contextinstanceid = "14";
         $event->userid = 2;
-        $event->courseid = "123";
-        $event->relateduserid = $id;
+        $event->courseid = "38";
+        $event->relateduserid = $user_id;
         $event->anonymous = "0";
         $event->timecreated = "1409543537";
         return $event;
     }
 
-    private function mock_form()
+    private function mock_form($time = 0)
     {
         $badgenames = [
             "123" => "mos",
@@ -76,18 +83,20 @@ class acclaim_lib_test extends advanced_testcase{
         return $fromform;
     }
 
-    private function create_pending_badge()
+    private function create_pending_badge($expiration = 0)
     {
         $pending_badge = new stdClass();
         $pending_badge->badgetemplateid = '123';
         $pending_badge->firstname = 'Richard';
         $pending_badge->lastname = 'Kimble';
-        $pending_badge->expiration = 0;
+        $pending_badge->expiration = $expiration;
         $pending_badge->recipientemail = 'richard.kimble@fugative.me';
         return $pending_badge;
     }
 
-    private function assert_curl($return_code, $url, $token, $time, $times = 1){
+    private function assert_curl(
+        $return_code, $url, $token, $time, $expires_at = 0, $times = 1){
+ 
         $expected_payload = [
             'badge_template_id' => '123',
             'issued_to_first_name' => 'Richard',
@@ -95,6 +104,11 @@ class acclaim_lib_test extends advanced_testcase{
             'recipient_email' => 'richard.kimble@fugative.me',
             'issued_at' => block_acclaim_convert_time_stamp($time)
         ];
+
+        if($expires_at != 0){
+            $expected_payload['expires_at'] =
+                block_acclaim_convert_time_stamp($expires_at);
+        }
 
         $mock_curl = $this->getMockBuilder(curl::class)
             ->setMethods(['post'])
@@ -158,58 +172,44 @@ class acclaim_lib_test extends advanced_testcase{
         $this->assertEquals($dataobject->badgeid,$course->badgeid);
    }
 
-   public function test_write_block_record()
-   {
-       global $DB;
-       $table = 'block_acclaim_courses';
-       $DB->delete_records($table);
-       $this->assertEmpty($DB->get_records($table));
-       $fromform = $this->mock_form();
+    public function test_set_course_badge_template_is_unique(){
+        global $DB;
 
-       $result = block_acclaim_write_badge_to_issue($fromform);
-       $count = $DB->count_records_select($table, "courseid = '38'");
-       
-       $this->assertEquals($count,1);
+        $result = block_acclaim_set_course_badge_template($this->mock_form());
+        $count = $DB->count_records_select(
+            'block_acclaim_courses', "courseid = '38'"
+        );
+        $this->assertEquals($count, 1);
 
-       $result = block_acclaim_write_badge_to_issue($fromform);
-       $count = $DB->count_records_select($table, "courseid = '38'");
-
-       $this->assertEquals(1,$count);
+        $result = block_acclaim_set_course_badge_template($this->mock_form());
+        $count = $DB->count_records_select(
+            'block_acclaim_courses', "courseid = '38'"
+        );
+        $this->assertEquals(1, $count);
    }
 
-   public function test_create_pending()
-   {
+   public function test_create_pending(){
         global $DB;
-        //create a user
-        $user = new stdClass();
-        $user->firstname = "Richard";
-        $user->lastname = "Kimble";
-        $user->email = "richard.kimble@fugative.me";
-        $id = $DB->insert_record('user', $user, $returnid=true, $bulk=false);
+        block_acclaim_set_course_badge_template($this->mock_form());
 
-        //create and event that will fire with the user id as relateduserid
-        $event = $this->mock_event($id);
-
-        //create a course with a badge_template
-        $dataobject = new stdClass();
-        $dataobject->badgeid = '919309fc-648c-42cb-9415-7f8ecf2f681f';
-        $dataobject->courseid = $event->courseid;
-        $dataobject->expiration = 0;
-        $dataobject->badgename = "test";
-        $DB->insert_record('block_acclaim_courses', $dataobject, $returnid=true, $bulk=false);
-
-        $count = $DB->count_records('block_acclaim_pending_badges');
-        $this->assertEquals(0, $count);
+        $event = $this->mock_event();
         block_acclaim_create_pending_badge($event);
         $count = $DB->count_records('block_acclaim_pending_badges');
         $this->assertEquals(1, $count);
 
-        $pending_badges = $DB->get_records_list('block_acclaim_pending_badges', 'badgetemplateid', array('919309fc-648c-42cb-9415-7f8ecf2f681f'));
+        $pending_badges = $DB->get_records_list(
+            'block_acclaim_pending_badges',
+            'badgetemplateid',
+            array('1edb816d-a9fb-445d-b024-bb52075718e5')
+        );
         $pending_badge = array_pop($pending_badges);
 
-        $this->assertEquals($user->firstname, $pending_badge->firstname);
-        $this->assertEquals($user->lastname, $pending_badge->lastname);
-        $this->assertEquals($user->email, $pending_badge->recipientemail);
+        $this->assertEquals('Richard', $pending_badge->firstname);
+        $this->assertEquals('Kimble', $pending_badge->lastname);
+        $this->assertEquals('richard.kimble@fugative.me',
+            $pending_badge->recipientemail
+        );
+        $this->assertEquals(0, $pending_badge->expiration);
    }
 
    public function test_build_radio_buttons()
@@ -231,6 +231,23 @@ class acclaim_lib_test extends advanced_testcase{
         $DB->insert_record('block_acclaim_pending_badges', $pending_badge);
         $this->assert_pending_badge_count(1);
         $mock_curl = $this->assert_curl(201, $url, $token, $time);
+        $return_code = block_acclaim_issue_badge(
+            $mock_curl, $time, $url, $token);
+        $this->assertEquals(201, $return_code);
+        $this->assert_pending_badge_count(0);
+   }
+
+    public function test_issue_badge_success_with_expiration(){
+        global $DB;
+        $time = time();
+        $url = 'url';
+        $token = 'token';
+
+        $this->assert_pending_badge_count(0);
+        $pending_badge = $this->create_pending_badge($time);
+        $DB->insert_record('block_acclaim_pending_badges', $pending_badge);
+        $this->assert_pending_badge_count(1);
+        $mock_curl = $this->assert_curl(201, $url, $token, $time, $expiras_at = $time);
         $return_code = block_acclaim_issue_badge(
             $mock_curl, $time, $url, $token);
         $this->assertEquals(201, $return_code);
@@ -285,7 +302,7 @@ class acclaim_lib_test extends advanced_testcase{
         $DB->insert_record('block_acclaim_pending_badges', $pending_badge);
         $this->assert_pending_badge_count(2);
 
-        $mock_curl = $this->assert_curl(201, $url, $token, $time, 2);
+        $mock_curl = $this->assert_curl(201, $url, $token, $time, 0, 2);
         $return_code = block_acclaim_issue_badge(
             $mock_curl, $time, $url, $token);
         $this->assertEquals(201, $return_code);

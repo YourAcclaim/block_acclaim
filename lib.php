@@ -70,7 +70,7 @@ function block_acclaim_get_block_course($course_id)
     return $course;
 }
 
-function block_acclaim_write_badge_to_issue($fromform)
+function block_acclaim_set_course_badge_template($fromform)
 {
     global $DB;
 
@@ -141,13 +141,7 @@ function block_acclaim_create_pending_badge_obj($event, $course)
     $firstname = $user->firstname;
     $lastname = $user->lastname;
     $email = $user->email;
-
-    $expires_at = "";
-    if($course->expiration){
-        $expires_at = block_acclaim_convert_time_stamp(
-            $course->expiration
-        );
-    }
+	$expires_at = $course->expiration;
 
     $pending_badge = new stdClass();
     $pending_badge->badgetemplateid = $badge_template_id;
@@ -175,6 +169,11 @@ function block_acclaim_issue_badge($curl, $time, $url, $token){
             'recipient_email' => $badge->recipientemail,
             'issued_at' => $datetime
         ];
+
+        if($badge->expiration){
+            $payload['expires_at'] =
+                block_acclaim_convert_time_stamp($badge->expiration);
+        }
 
         $curl->post(
             $url, $payload, array( "CURLOPT_USERPWD" => $token. ":" )
