@@ -24,4 +24,4 @@ $string['pluginname'] = 'Acclaim';
 $string['acclaim'] = 'Acclaim';
 $string['acclaim:addinstance'] = 'Add a new Acclaim block';
 $string['acclaim:myaddinstance'] = 'Add a new Acclaim block to the My Moodle page';
-$string['privacy:metadata'] = 'The Acclaim block only only stores course and badge_template details';
+$string['privacy:metadata'] = 'The Acclaim block only only stores course and badge_template details. User data is stored in a temporary table and removed once issued';
