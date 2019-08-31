@@ -4,7 +4,7 @@
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="block_acclaim" COMMENT="Map course contents to an Acclaim badge_template.">
+    <TABLE NAME="block_acclaim_courses" COMMENT="Map course contents to an Acclaim badge_template.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Course ID"/>
@@ -19,5 +19,20 @@
         <INDEX NAME="courseid" UNIQUE="true" FIELDS="courseid"/>
       </INDEXES>
     </TABLE>
+
+    <TABLE NAME="block_acclaim_pending_badges" COMMENT="Store badges to be issued upon course complete">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="badgetemplateid" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Badge Template ID"/>
+        <FIELD NAME="firstname" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Issued to First Name"/>
+        <FIELD NAME="lastname" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Issued to Last Name"/>
+        <FIELD NAME="recipientemail" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Recipient Email   "/>
+        <FIELD NAME="expiration" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Badge Expiration"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+
   </TABLES>
 </XMLDB>

@@ -15,13 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
-* @package    block_acclaim
-* @copyright  2014 Yancy Ribbens <yancy.ribbens@gmail.com>
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * Scheduled task to issue badges
+ *
+ * @package    block_acclaim
+ * @copyright  2014 Yancy Ribbens <yancy.ribbens@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-$string['pluginname'] = 'Acclaim';
-$string['acclaim'] = 'Acclaim';
-$string['acclaim:addinstance'] = 'Add a new Acclaim block';
-$string['acclaim:myaddinstance'] = 'Add a new Acclaim block to the My Moodle page';
-$string['privacy:metadata'] = 'The Acclaim block only only stores course and badge_template details. User data is stored in a temporary table and removed once issued';
+defined('MOODLE_INTERNAL') || die();
+
+$tasks = [
+    [
+        'classname' => 'block_acclaim\task\issue_badges',
+        'blocking' => 0,
+        'minute' => '*/5',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+    ],
+];
