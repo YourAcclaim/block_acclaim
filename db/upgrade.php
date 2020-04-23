@@ -1,3 +1,13 @@
+/**
+ * Credly's Acclaim Moodle Block Plugin
+ * Credly: http://youracclaim.com
+ * Moodle: http://moodle.org/
+ *
+ * @package    block_acclaim
+ * @copyright  2020 Credly, Inc. <http://youracclaim.com>
+ * @license    https://opensource.org/licenses/MIT
+ */
+
 function xmldb_qtype_myqtype_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
