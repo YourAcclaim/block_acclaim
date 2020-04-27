@@ -7,10 +7,9 @@ Installation
 To install this block plugin:
 
 <ol>
-  <li>Clone this repository</li>
-  <li>Remove directory .git and .gitignore </li>
-  <li>Rename the top level directory from block_acclaim -> acclaim
-  <li>Zip the repository directory acclaim and name acclaim.zip</li>
+  <li>Navigate to the release tab and download the latest release zip. github.com/YourAcclaim/block_acclaim/releases</li>
+  <li>Unzip the zip file and rename the top level directory to acclaim
+  <li>Rezip the directory and name the zip file acclaim.zip</li>
   <li>Login to Moodle as Administrator</li>
   <li>Navigate to: Site Administration > Plugins > Install Plugins</li>
   <li>Under Plugin type, choose “Block”</li>
