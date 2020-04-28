@@ -1,30 +1,31 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Credly's Acclaim Moodle Block Plugin
 //
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Credly's Acclaim Moodle Block Plugin is free software: you can redistribute it
+// and/or modify it under the terms of the MIT license as published by
+// the Free Software Foundation.
 //
-// Moodle is distributed in the hope that it will be useful,
+// This script is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
+// MIT License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// You can find the GNU General Public License at <https://opensource.org/licenses/MIT>.
 
 /**
- * course_overview block settings
+ * Credly's Acclaim Moodle Block Plugin
+ * Credly: http://youracclaim.com
+ * Moodle: http://moodle.org/
+ *
+ * course_overview block settings.
  *
  * @package    block_acclaim
- * @copyright  2014 Yancy Ribbens <yancy.ribbens@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
-
+ * @copyright  2020 Credly, Inc. <http://youracclaim.com>
+ * @license    https://opensource.org/licenses/MIT
+ */
 require_once('../../config.php');
 require_once('block_acclaim_form.php');
-require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
+require_once($CFG->dirroot . '/blocks/acclaim/acclaim.php');
 
 global $DB, $OUTPUT, $PAGE;
 
@@ -32,7 +33,7 @@ $courseid = required_param('courseid', PARAM_INT);
 $blockid = required_param('blockid', PARAM_INT);
 $id = optional_param('id', 0, PARAM_INT);
 
-error_log("courseid: ".$courseid);
+error_log('courseid: '. $courseid);
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('invalidcourse', 'block_acclaim', $courseid);
@@ -49,20 +50,21 @@ $editurl = new moodle_url('/blocks/acclaim/view.php', array('id' => $id, 'course
 $editnode = $settingsnode->add('Select Badge', $editurl);
 $editnode->make_active();
 
-$acclaim = new block_acclaim_form();
+$acclaim_form_data = new block_acclaim_form();
 
 $toform['blockid'] = $blockid;
 $toform['courseid'] = $courseid;
 
-$acclaim->set_data($toform);
+$acclaim_form_data->set_data($toform);
 
-if($acclaim->is_cancelled()) {
+if ($acclaim_form_data->is_cancelled()) {
     $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
     redirect($courseurl);
-} else if ($fromform = $acclaim->get_data()) {
+} else if ($fromform = $acclaim_form_data->get_data()) {
+    $acclaim = new Acclaim();
     $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
     // We need to add code to appropriately act on and store the submitted data
-    if (!block_acclaim_set_course_badge_template($fromform)) {
+    if (!$acclaim->set_course_badge_template($fromform)) {
         print_error('inserterror', 'block_acclaim');
     }
     redirect($courseurl);
@@ -70,8 +72,6 @@ if($acclaim->is_cancelled()) {
     // form didn't validate or this is the first display
     $site = get_site();
     echo $OUTPUT->header();
-    $acclaim->display();
+    $acclaim_form_data->display();
     echo $OUTPUT->footer();
 }
-
-?>
