@@ -28,19 +28,19 @@ GLOBAL $CFG;
 defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(__FILE__) . '/../../../config.php');
-require_once($CFG->dirroot . '/blocks/acclaim/acclaim.php');
+require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 
-class AcclaimTest extends advanced_testcase {
+class block_acclaim_lib_test extends advanced_testcase {
     private $acclaim = null;
 
     function setUp() {
         $this->resetAfterTest(true);
 
-        $this->acclaim = new Acclaim();
-        Acclaim::$config = new stdClass();
-        Acclaim::$config->url = 'url';
-        Acclaim::$config->token = 'token';
-        Acclaim::$config->org = '123';
+        $this->acclaim = new block_acclaim_lib();
+        block_acclaim_lib::$config = new stdClass();
+        block_acclaim_lib::$config->url = 'url';
+        block_acclaim_lib::$config->token = 'token';
+        block_acclaim_lib::$config->org = '123';
     }
 
     ////////////////////
@@ -48,7 +48,7 @@ class AcclaimTest extends advanced_testcase {
     ////////////////////
 
     public function test_accumulate_badge_names() {
-        $this->acclaim = new Acclaim();
+        $this->acclaim = new block_acclaim_lib();
         $badge_items = array();
         $json = json_encode(array('data' => array(0 => array('id' => 1, 'name' => 'johnny'))));
         $this->invokePrivate('accumulate_badge_names', array($json, &$badge_items));
@@ -60,7 +60,7 @@ class AcclaimTest extends advanced_testcase {
 
     public function test_create_pending_badge() {
         global $DB;
-        $this->acclaim = new Acclaim();
+        $this->acclaim = new block_acclaim_lib();
 
         $form = $this->mock_form();
         $form->badgename = 'some name';
@@ -302,7 +302,7 @@ class AcclaimTest extends advanced_testcase {
             ->with(
                 $url,
                 $expected_payload,
-                array('CURLOPT_USERPWD' => Acclaim::$config->token . ':')
+                array('CURLOPT_USERPWD' => block_acclaim_lib::$config->token . ':')
             );
         return $mock_curl;
     }
@@ -337,7 +337,7 @@ class AcclaimTest extends advanced_testcase {
      * @return mixed Method return.
      */
     private function invokePrivate($methodName, array $parameters = array()) {
-        $reflection = new \ReflectionClass(Acclaim::class);
+        $reflection = new \ReflectionClass(block_acclaim_lib::class);
         $method = $reflection->getMethod($methodName);
         $method->setAccessible(true);
         return $method->invokeArgs($this->acclaim, $parameters);

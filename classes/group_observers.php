@@ -27,11 +27,11 @@ namespace block_acclaim;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/blocks/acclaim/acclaim.php');
+require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 
 class group_observers {
     public static function block_acclaim_create_pending_badge($event) {
-        (new Acclaim())->create_pending_badge($event->courseid, $event->relateduserid);
+        (new block_acclaim_lib())->create_pending_badge($event->courseid, $event->relateduserid);
     }
 }
 

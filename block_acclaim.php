@@ -25,7 +25,7 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/blocks/acclaim/acclaim.php');
+require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 
 class block_acclaim extends block_base {
     private $acclaim = null;
@@ -36,7 +36,7 @@ class block_acclaim extends block_base {
      * @return string
      */
     public function init() {
-        $this->acclaim = new Acclaim();
+        $this->acclaim = new block_acclaim_lib();
         $this->title = get_string('acclaim', 'block_acclaim');
     }
 

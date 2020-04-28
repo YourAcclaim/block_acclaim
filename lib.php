@@ -25,7 +25,7 @@
  */
 require_once(__DIR__ . '/../../config.php');
 
-class Acclaim {
+class block_acclaim_lib {
     public static $config = null;
 
     public static function config() {
@@ -87,7 +87,7 @@ class Acclaim {
             }
 
             $curl->post(
-                $url, $payload, array('CURLOPT_USERPWD' => Acclaim::$config->token . ':')
+                $url, $payload, array('CURLOPT_USERPWD' => block_acclaim_lib::$config->token . ':')
             );
 
             if ($curl->info['http_code'] == 201) {

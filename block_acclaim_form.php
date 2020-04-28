@@ -24,7 +24,7 @@
  * @license    https://opensource.org/licenses/MIT
  */
 require_once("{$CFG->libdir}/formslib.php");
-require_once($CFG->dirroot . '/blocks/acclaim/acclaim.php');
+require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 
 class block_acclaim_form extends moodleform {
     function definition() {
@@ -32,7 +32,7 @@ class block_acclaim_form extends moodleform {
 
         //populate form
         $mform->addElement('header','displayinfo', 'Select Badge');
-        $badge_items = (new Acclaim())->badge_names();
+        $badge_items = (new block_acclaim_lib())->badge_names();
         $mform->addElement('select', 'badgeid', 'Acclaim Badges', $badge_items, '');
         $mform->addElement('date_time_selector', 'expiration', 'Expires', array('optional' => true));
         $mform->setAdvanced('optional');
