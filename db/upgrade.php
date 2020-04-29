@@ -38,8 +38,9 @@ function xmldb_block_acclaim_upgrade($oldversion) {
         $table = new xmldb_table('block_acclaim');
 
         // Launch rename table for block_acclaim_courses.
-        $dbman->rename_table($table, 'block_acclaim_courses');
-
+        if ($dbman->table_exists($table)) {
+            $dbman->rename_table($table, 'block_acclaim_courses');
+        }
         // Acclaim savepoint reached.
         upgrade_block_savepoint(true, 2020042200, 'acclaim');
     }
