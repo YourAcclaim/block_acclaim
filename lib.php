@@ -27,6 +27,7 @@ require_once(__DIR__ . '/../../config.php');
 
 class block_acclaim_lib {
     public static $config = null;
+    public static $allow_print = true;
 
     public static function config() {
         if (!isset(self::$config)) {
@@ -60,12 +61,12 @@ class block_acclaim_lib {
     }
 
     /**
-     * Issue a badge through Acclaim.
+     * Issue all pending badges through Acclaim.
      *
      * @param curl $curl - The curl http library.
      * @return http code
      */
-    public function issue_badge($curl) {
+    public function issue_pending_badges($curl) {
         global $DB;
         $config = self::$config;
         $datetime = $this->convert_time_stamp(time());
@@ -74,6 +75,10 @@ class block_acclaim_lib {
         $pending_badges = $DB->get_records('block_acclaim_pending_badges');
 
         foreach ($pending_badges as &$badge) {
+            // Output goes to the cron log.
+            if (self::$allow_print) {
+                print "Acclaim block: Issuing badge {$badge->badgetemplateid} to {$badge->recipientemail}.\n";
+            }
             $payload = [
                 'badge_template_id' => $badge->badgetemplateid,
                 'issued_to_first_name' => $badge->firstname,
@@ -93,17 +98,26 @@ class block_acclaim_lib {
             if ($curl->info['http_code'] == 201) {
                 // The badge has been issued so we remove it from pending.
                 $DB->delete_records('block_acclaim_pending_badges',  array('id' => $badge->id));
+                if (self::$allow_print) {
+                    print "Acclaim block: Success.\n";
+                }
             } elseif ($curl->info['http_code'] == 422) {
                 // Acclaim can not issue the badge so we remove this from pending
                 // so it will not try again.  This could happen for example if the
                 // user already has been issued a badge.
-                error_log(print_r($curl->response, true));
+                if (self::$allow_print) {
+                    print "Acclaim block: Failed. Error 422. This task will not be re-tried.\n";
+                    error_log(print_r($curl->response, true));
+                }
                 $DB->delete_records('block_acclaim_pending_badges',  array('id' => $badge->id));
             } else {
                 // some other issue is preventing the badge from being issued
                 // for example site down or token incorrectly entered.  The
                 // record is left as pending to try again in the future.
-                error_log(print_r($curl->response, true));
+                if (self::$allow_print) {
+                    print "Acclaim block: Failed. Try again later.\n";
+                    error_log(print_r($curl->response, true));
+                }
             }
         };
 

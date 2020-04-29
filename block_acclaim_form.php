@@ -32,7 +32,7 @@ class block_acclaim_form extends moodleform {
 
         //populate form
         $mform->addElement('header','displayinfo', 'Select Badge');
-        $badge_items = (new block_acclaim_lib())->badge_names();
+        $badge_items = (new \block_acclaim_lib())->badge_names();
         $mform->addElement('select', 'badgeid', 'Acclaim Badges', $badge_items, '');
         $mform->addElement('date_time_selector', 'expiration', 'Expires', array('optional' => true));
         $mform->setAdvanced('optional');

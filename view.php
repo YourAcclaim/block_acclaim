@@ -61,7 +61,7 @@ if ($acclaim_form_data->is_cancelled()) {
     $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
     redirect($courseurl);
 } else if ($fromform = $acclaim_form_data->get_data()) {
-    $acclaim = new block_acclaim_lib();
+    $acclaim = new \block_acclaim_lib();
     $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
     // We need to add code to appropriately act on and store the submitted data
     if (!$acclaim->set_course_badge_template($fromform)) {

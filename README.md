@@ -4,19 +4,19 @@ This is a Moodle Block Plugin used to issue Acclaim badges when a course is succ
 ## Installation
 To install this block plugin:
 
-* Clone this repository
-* Remove directory .git and .gitignore
-* Zip the repository directory block_acclaim and name acclaim.zip
-* Login to Moodle as Administrator
-* Navigate to: Site Administration > Plugins > Install Plugins
-* Under Plugin type, choose “Block”
-* Drag and drop acclaim.zip
-* Select “Install Plugin From Zip”
+* Navigate to the release tab and download the latest release zip. github.com/YourAcclaim/block_acclaim/releases.
+* Unzip the zip file and rename the top level directory to acclaim.
+* Rezip the directory and name the zip file acclaim.zip.
+* Login to Moodle as Administrator.
+* Navigate to: Site Administration > Plugins > Install Plugins.
+* Under Plugin type, choose “Block.”
+* Drag and drop acclaim.zip.
+* Select “Install Plugin From Zip.”
 * Next, select “Install plugin!”  If all validations pass.
 * Choose “Upgrade Moodle database now”.
 * Press continue, when prompted to upgrade version.
-* Finally, enter the Acclaim URL, your Organization ID and Token
-* Lastly, choose “Save changes”.
+* Enter the Acclaim URL, your Organization ID and Token.
+* Choose “Save changes”.
 
 ## Usage
 Once the Block Plugin has been installed, you can attach a Badge to any of your Moodle Courses as follows.

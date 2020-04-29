@@ -17,7 +17,8 @@
  * Credly: http://youracclaim.com
  * Moodle: http://moodle.org/
  *
- * PHPUnit data generator tests
+ * PHPUnit data generator tests. Do not change the capitalization of this file name. phpunit expects files
+ * of the form "*Test.php"
  *
  * @package    block_acclaim
  * @copyright  2020 Credly, Inc. <http://youracclaim.com>
@@ -41,6 +42,7 @@ class block_acclaim_lib_test extends advanced_testcase {
         block_acclaim_lib::$config->url = 'url';
         block_acclaim_lib::$config->token = 'token';
         block_acclaim_lib::$config->org = '123';
+        block_acclaim_lib::$allow_print = false;
     }
 
     ////////////////////
@@ -116,7 +118,7 @@ class block_acclaim_lib_test extends advanced_testcase {
         $this->assertEquals($dataobject->badgeid,$badge_id);
     }
 
-    public function test_issue_badge_success() {
+    public function test_issue_pending_badges_success() {
         global $DB;
         $url = 'url/organizations/123/badges';
 
@@ -125,12 +127,12 @@ class block_acclaim_lib_test extends advanced_testcase {
         $DB->insert_record('block_acclaim_pending_badges', $pending_badge);
         $this->assert_pending_badge_count(1);
         $mock_curl = $this->assert_curl(201, $url);
-        $return_code = $this->acclaim->issue_badge($mock_curl);
+        $return_code = $this->acclaim->issue_pending_badges($mock_curl);
         $this->assertEquals(201, $return_code);
         $this->assert_pending_badge_count(0);
     }
 
-    public function test_issue_badge_success_with_expiration() {
+    public function test_issue_pending_badges_success_with_expiration() {
         global $DB;
         $time = time();
         $url = 'url/organizations/123/badges';
@@ -140,12 +142,12 @@ class block_acclaim_lib_test extends advanced_testcase {
         $DB->insert_record('block_acclaim_pending_badges', $pending_badge);
         $this->assert_pending_badge_count(1);
         $mock_curl = $this->assert_curl(201, $url, $time);
-        $return_code = $this->acclaim->issue_badge($mock_curl);
+        $return_code = $this->acclaim->issue_pending_badges($mock_curl);
         $this->assertEquals(201, $return_code);
         $this->assert_pending_badge_count(0);
     }
 
-    public function test_issue_badge_unprocessable_entity() {
+    public function test_issue_pending_badges_unprocessable_entity() {
         global $DB;
         $url = 'url/organizations/123/badges';
 
@@ -155,12 +157,12 @@ class block_acclaim_lib_test extends advanced_testcase {
         $this->assert_pending_badge_count(1);
 
         $mock_curl = $this->assert_curl(422, $url);
-        $return_code = $this->acclaim->issue_badge($mock_curl);
+        $return_code = $this->acclaim->issue_pending_badges($mock_curl);
         $this->assertEquals(422, $return_code);
         $this->assert_pending_badge_count(0);
     }
 
-    public function test_issue_badge_failure() {
+    public function test_issue_pending_badges_failure() {
         global $DB;
         $url = 'url/organizations/123/badges';
 
@@ -170,12 +172,12 @@ class block_acclaim_lib_test extends advanced_testcase {
         $this->assert_pending_badge_count(1);
 
         $mock_curl = $this->assert_curl(401, $url);
-        $return_code = $this->acclaim->issue_badge($mock_curl);
+        $return_code = $this->acclaim->issue_pending_badges($mock_curl);
         $this->assertEquals(401, $return_code);
         $this->assert_pending_badge_count(1);
     }
 
-    public function test_issue_badge_mutltiple() {
+    public function test_issue_pending_badges_mutltiple() {
         global $DB;
         $url = 'url/organizations/123/badges';
 
@@ -186,7 +188,7 @@ class block_acclaim_lib_test extends advanced_testcase {
         $this->assert_pending_badge_count(2);
 
         $mock_curl = $this->assert_curl(201, $url, 0, 2);
-        $return_code = $this->acclaim->issue_badge($mock_curl);
+        $return_code = $this->acclaim->issue_pending_badges($mock_curl);
         $this->assertEquals(201, $return_code);
 
         $this->assert_pending_badge_count(0);

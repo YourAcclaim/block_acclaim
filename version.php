@@ -21,8 +21,9 @@
  * @copyright  2020 Credly, Inc. <http://youracclaim.com>
  * @license    https://opensource.org/licenses/MIT
  */
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2019080211; // YYYYMMDDHH (year, month, day, 24-hr time)
-$plugin->requires  = 2014050800; // Requires this Moodle version
+$plugin->version = 2020042200;  // YYYYMMDDHH (year, month, day, 24-hr time)
+$plugin->requires  = 2014050800;        // Requires this Moodle version
 $plugin->component = 'block_acclaim'; // Full name of the plugin (used for diagnostics)

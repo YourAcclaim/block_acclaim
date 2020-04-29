@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 
 class group_observers {
     public static function block_acclaim_create_pending_badge($event) {
-        (new block_acclaim_lib())->create_pending_badge($event->courseid, $event->relateduserid);
+        (new \block_acclaim_lib())->create_pending_badge($event->courseid, $event->relateduserid);
     }
 }
 

@@ -36,7 +36,7 @@ class block_acclaim extends block_base {
      * @return string
      */
     public function init() {
-        $this->acclaim = new block_acclaim_lib();
+        $this->acclaim = new \block_acclaim_lib();
         $this->title = get_string('acclaim', 'block_acclaim');
     }
 
