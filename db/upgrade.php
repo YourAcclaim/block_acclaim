@@ -1,3 +1,4 @@
+
 /**
  * Credly's Acclaim Moodle Block Plugin
  * Credly: http://youracclaim.com
@@ -8,7 +9,7 @@
  * @license    https://opensource.org/licenses/MIT
  */
 
-function xmldb_qtype_myqtype_upgrade($oldversion) {
+function xmldb_block_acclaim_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
     /// Add a new column newcol to the mdl_myqtype_options
