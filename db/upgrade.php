@@ -1,4 +1,4 @@
-
+<?php
 /**
  * Credly's Acclaim Moodle Block Plugin
  * Credly: http://youracclaim.com
