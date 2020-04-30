@@ -31,10 +31,10 @@ class block_acclaim_form extends moodleform {
         $mform =& $this->_form;
 
         //populate form
-        $mform->addElement('header','displayinfo', 'Select Badge');
+        $mform->addElement('header','displayinfo', get_string('select_badge', 'block_acclaim'));
         $badge_items = (new \block_acclaim_lib())->badge_names();
-        $mform->addElement('select', 'badgeid', 'Acclaim Badges', $badge_items, '');
-        $mform->addElement('date_time_selector', 'expiration', 'Expires', array('optional' => true));
+        $mform->addElement('select', 'badgeid', get_string('acclaim_badges', 'block_acclaim'), $badge_items, '');
+        $mform->addElement('date_time_selector', 'expiration', get_string('expires', 'block_acclaim'), array('optional' => true));
         $mform->setAdvanced('optional');
 
         // hidden elements

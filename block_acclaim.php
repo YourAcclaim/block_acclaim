@@ -81,12 +81,12 @@ class block_acclaim extends block_base {
      */
     public function applicable_formats() {
         return array(
-           'site-index' => false,
-           'course-view' => true,
-           'course-view-social' => false,
-           'mod' => false, 
-           'mod-quiz' => false
-          );
+            'site-index' => false,
+            'course-view' => true,
+            'course-view-social' => false,
+            'mod' => false,
+            'mod-quiz' => false
+        );
     }
 
     /**
@@ -113,7 +113,7 @@ class block_acclaim extends block_base {
     
         $context = context_course::instance($COURSE->id);
         if (has_capability('block/acclaim:editbadge', $this->context)) {
-            $this->content->footer = html_writer::link($url,'Select Badge');
+            $this->content->footer = html_writer::link($url, get_string('select_badge', 'block_acclaim'));
         }
         return $this->content;
     }
