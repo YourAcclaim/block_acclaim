@@ -17,30 +17,31 @@
  * Credly: http://youracclaim.com
  * Moodle: http://moodle.org/
  *
- * This file is needed when backing up a course.
- * See https://docs.moodle.org/dev/Backup_API
- * See https://docs.moodle.org/dev/Backup_2.0_for_developers
+ * This file is needed when restoring a course.
+ * See https://docs.moodle.org/dev/Restore_API
+ * See https://docs.moodle.org/dev/Restore_2.0_for_developers
  *
  * @package    block_acclaim
  * @copyright  2020 Credly, Inc. <http://youracclaim.com>
  * @license    https://opensource.org/licenses/MIT
  */
-require_once($CFG->dirroot . '/backup/moodle2/backup_block_task.class.php');
-require_once(__DIR__ . '/backup_acclaim_stepslib.php');
+require_once($CFG->dirroot . '/backup/moodle2/restore_block_task.class.php');
+require_once(__DIR__ . '/restore_acclaim_stepslib.php');
 
-class backup_acclaim_block_task extends backup_block_task {
+class restore_acclaim_block_task extends restore_block_task {
     /**
      * A sequence of steps to execute to back up the database.
      *
      * @override
      */
     protected function define_my_steps() {
-        $this->add_step(new backup_acclaim_structure_step('acclaim_structure', 'acclaim.xml'));
+        $this->add_step(new restore_acclaim_block_structure_step('acclaim_structure', 'acclaim.xml'));
     }
 
     // No-op overrides not used by this plugin.
     protected function define_my_settings() {}
     public function get_fileareas() {return [];}
     public function get_configdata_encoded_attributes() {return [];}
-    static public function encode_content_links($content) {return $content;}
+    static public function define_decode_contents() {return [];}
+    static public function define_decode_rules() {return [];}
 }

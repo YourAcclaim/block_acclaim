@@ -114,7 +114,7 @@ class block_acclaim_lib {
                     print "Acclaim block: Failed. Error 422. This task will not be re-tried.\n";
                     error_log(print_r($curl->response, true));
                 }
-                $DB->delete_records('block_acclaim_pending_badges',  array('id' => $badge->id));
+                $DB->delete_records('block_acclaim_pending_badges', array('id' => $badge->id));
             } else {
                 // some other issue is preventing the badge from being issued
                 // for example site down or token incorrectly entered.  The
