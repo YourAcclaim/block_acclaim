@@ -22,10 +22,12 @@
  * @license    https://opensource.org/licenses/MIT
  */
 
-// Re-reading this file requires a version change. In development, set this in config.php instead:
-//   $CFG->langstringcache = false;
+// Re-reading this file requires a version change.
+// In development, set this in config.php instead: $CFG->langstringcache = false;
 $string['pluginname'] = 'Acclaim';
 $string['acclaim'] = 'Acclaim';
+$string['config_header'] = 'Create a new Acclaim block for this course';
+$string['config_instructions'] = 'This block will issue an Acclaim badge on course completion. The badge may be selected from the course page.';
 $string['acclaim:addinstance'] = 'Add a new Acclaim block';
 $string['acclaim:myaddinstance'] = 'Add a new Acclaim block to the My Moodle page';
 $string['privacy:metadata'] = 'The Acclaim block only stores course and badge template details. User data is stored in a temporary table and removed once issued';
