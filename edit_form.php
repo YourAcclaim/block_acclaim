@@ -18,6 +18,7 @@
  * Moodle: http://moodle.org/
  *
  * Configuration form.
+ * @see https://docs.moodle.org/dev/Form_API
  *
  * @package    block_acclaim
  * @copyright  2020 Credly, Inc. <http://youracclaim.com>
@@ -25,9 +26,7 @@
  */
 class block_acclaim_edit_form extends block_edit_form {
     protected function specific_definition($mform) {
-        $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
-        $mform->addElement('text', 'config_text', get_string('blockstring', 'block_acclaim'));
-        $mform->setDefault('config_text', 'default value');
-        $mform->setType('config_text', PARAM_RAW);        
+        $mform->addElement('header', 'configheader', get_string('config_header', 'block_acclaim'));
+        $mform->addElement('html', get_string('config_instructions', 'block_acclaim'));
     }
 }

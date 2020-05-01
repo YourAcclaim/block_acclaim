@@ -18,6 +18,7 @@
  * Moodle: http://moodle.org/
  *
  * A form to select which badge this course issues on completion.
+ * @see https://docs.moodle.org/dev/Form_API
  *
  * @package    block_acclaim
  * @copyright  2020 Credly, Inc. <http://youracclaim.com>
