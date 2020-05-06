@@ -1,249 +1,253 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Credly's Acclaim Moodle Block Plugin
 //
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Credly's Acclaim Moodle Block Plugin is free software: you can redistribute it
+// and/or modify it under the terms of the MIT license as published by
+// the Free Software Foundation.
 //
-// Moodle is distributed in the hope that it will be useful,
+// This script is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
+// MIT License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// You can find the GNU General Public License at <https://opensource.org/licenses/MIT>.
 
 /**
-* @package    block_acclaim
-* @copyright  2014 Yancy Ribbens <yancy.ribbens@gmail.com>
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * Credly's Acclaim Moodle Block Plugin
+ * Credly: http://youracclaim.com
+ * Moodle: http://moodle.org/
+ *
+ * Utility functions for the plugin.
+ *
+ * @package    block_acclaim
+ * @copyright  2020 Credly, Inc. <http://youracclaim.com>
+ * @license    https://opensource.org/licenses/MIT
+ */
+require_once(__DIR__ . '/../../config.php');
 
-require_once(dirname(__FILE__).'/../../config.php');
+class block_acclaim_lib {
+    public static $config = null;
+    public static $allow_print = true;
 
-function block_acclaim_query_acclaim_api($customUrl)
-{
-    $config = get_config('block_acclaim');
-    $url="{$config->url}/organizations/{$config->org}/badge_templates?sort=name&filter=state::active";
-    if (!is_null($customUrl)) {
-    	$url = $customUrl;
+    public static function config() {
+        if (!isset(self::$config)) {
+            self::$config = get_config('block_acclaim');
+        }
+        return self::$config;
     }
-    $username=$config->token;
-    $password = "";
-    $curl = new curl;
-    return block_acclaim_return_json_badges($curl, $url, $username);
-}
 
-function block_acclaim_truncate($input)
-{
-    $max_length = 75;
+    public function __construct() {
+        self::config();
+    }
 
-    if(strlen($input) > $max_length){
-        $len = strlen($input);
-        $trim_amount = ($max_length - $len);
-        return substr($input,0, $trim_amount)."...";
+    /**
+     * Queue up a badge to be issued by Acclaim.
+     *
+     * @param stdClass $event
+     */
+    public function create_pending_badge($course_id, $user_id) {
+        global $DB;
+        $course = $DB->get_record('block_acclaim_courses', array('courseid' => $course_id), '*', MUST_EXIST);
+        $user = $DB->get_record('user', array('id' => $user_id), '*', MUST_EXIST);
+
+        $pending_badge = new stdClass();
+        $pending_badge->badgetemplateid = $course->badgeid;
+        $pending_badge->firstname = $user->firstname;
+        $pending_badge->lastname = $user->lastname;
+        $pending_badge->expiration = $course->expiration;
+        $pending_badge->recipientemail = $user->email;
+
+        $DB->insert_record('block_acclaim_pending_badges', $pending_badge);
+    }
+
+    /**
+     * Issue all pending badges through Acclaim.
+     *
+     * @param curl $curl - The curl http library.
+     * @return http code
+     */
+    public function issue_pending_badges($curl) {
+        global $DB;
+        $config = self::$config;
+        $datetime = $this->convert_time_stamp(time());
+        $url = "{$config->url}/organizations/{$config->org}/badges";
+
+        $pending_badges = $DB->get_records('block_acclaim_pending_badges');
+
+        foreach ($pending_badges as &$badge) {
+            // Output goes to the cron log.
+            if (self::$allow_print) {
+                print "Acclaim block: Issuing badge {$badge->badgetemplateid} to {$badge->recipientemail}.\n";
+            }
+            $payload = [
+                'badge_template_id' => $badge->badgetemplateid,
+                'issued_to_first_name' => $badge->firstname,
+                'issued_to_last_name' => $badge->lastname,
+                'recipient_email' => $badge->recipientemail,
+                'issued_at' => $datetime
+            ];
+
+            if ($badge->expiration) {
+                $payload['expires_at'] = $this->convert_time_stamp($badge->expiration);
+            }
+
+            $curl->post(
+                $url, $payload, array('CURLOPT_USERPWD' => block_acclaim_lib::$config->token . ':')
+            );
+
+            if ($curl->info['http_code'] == 201) {
+                // The badge has been issued so we remove it from pending.
+                $DB->delete_records('block_acclaim_pending_badges',  array('id' => $badge->id));
+                if (self::$allow_print) {
+                    print "Acclaim block: Success.\n";
+                }
+            } elseif ($curl->info['http_code'] == 422) {
+                // Acclaim can not issue the badge so we remove this from pending
+                // so it will not try again.  This could happen for example if the
+                // user already has been issued a badge.
+                if (self::$allow_print) {
+                    print "Acclaim block: Failed. Error 422. This task will not be re-tried.\n";
+                    error_log(print_r($curl->response, true));
+                }
+                $DB->delete_records('block_acclaim_pending_badges',  array('id' => $badge->id));
+            } else {
+                // some other issue is preventing the badge from being issued
+                // for example site down or token incorrectly entered.  The
+                // record is left as pending to try again in the future.
+                if (self::$allow_print) {
+                    print "Acclaim block: Failed. Try again later.\n";
+                    error_log(print_r($curl->response, true));
+                }
+            }
+        };
+
+        return $curl->info['http_code'];
+    }
+
+    /**
+     * Get any field from a course.
+     *
+     * @param string $course_id
+     * @param string $field
+     * @return string
+     */
+    function get_course_info($course_id, $field) {
+        global $DB;
+        $course = $DB->get_record('block_acclaim_courses', array('courseid' => $course_id));
+        return empty($course) ? '' : $course->$field;
+    }
+
+    /**
+     * Add course information to the form, and save it to the database.
+     *
+     * @param block_acclaim_form $fromform - The block data for the course.
+     * @return stdClass - The inserted database record.
+     */
+    function set_course_badge_template($fromform) {
+        global $DB;
+
+        $badge_name = json_decode($fromform->badgename)->{$fromform->badgeid};
+        if (isset($badge_name)) {
+            $fromform->badgename = $badge_name;
         }
 
-    return $input;
-}
+        $DB->delete_records('block_acclaim_courses',  array('courseid' => $fromform->courseid));
 
-function block_acclaim_get_badge_info($course_id,$field)
-{
-    global $DB;
-    $return_val = "";
-
-    $course = $DB->get_record('block_acclaim_courses', array('courseid' => $course_id));
-
-    if(!empty($course)){
-        $return_val = $course->$field;
+        return $DB->insert_record('block_acclaim_courses', $fromform);
     }
 
-    return $return_val;
-}
 
-function block_acclaim_get_block_course($course_id)
-{
-    global $DB;
-    $course = $DB->get_record('block_acclaim_courses', array('courseid' => $course_id), '*', MUST_EXIST);
-    return $course;
-}
+    /**
+     * Get all badges.
+     *
+     * @return array
+     */
+    function badge_names() {
+        $badge_items = array();
 
-function block_acclaim_set_course_badge_template($fromform)
-{
-    global $DB;
+        $json = $this->query_api(null);
+        $this->accumulate_badge_names($json, $badge_items);
 
-    $fromform = block_acclaim_update_form_with_badge_name($fromform);
-    $DB->delete_records('block_acclaim_courses',  array('courseid' => $fromform->courseid));
+        $next_page_url = '';
+        if (isset($json['metadata'])) {
+            $metadata = $json['metadata'];
+            $next_page_url = $metadata['next_page_url'];
 
-    return $DB->insert_record('block_acclaim_courses', $fromform);
-}
+            while (!is_null($next_page_url)) {
+                $json = $this->query_api("$next_page_url&sort=name&filter=state::active");
+                $this->accumulate_badge_names($json, $badge_items);
 
-function block_acclaim_get_issue_badge_url()
-{
-    $block_acclaim_config = get_config('block_acclaim');
-
-    $base_url = $block_acclaim_config->url;
-    $org_id = $block_acclaim_config->org;
-    $request_url = "{$base_url}/organizations/{$org_id}/badges";
-    return $request_url;
-}
-
-function block_acclaim_get_request_token()
-{
-    $block_acclaim_config = get_config('block_acclaim');
-    return $block_acclaim_config->token;
-}
-
-function block_acclaim_return_user($user_id)
-{
-    global $DB;
-    return $DB->get_record('user', array('id'=>$user_id), '*', MUST_EXIST);
-}
-
-function block_acclaim_convert_time_stamp($timestamp)
-{
-    if($timestamp){
-        return gmdate("Y-m-d  h:i:s a", $timestamp);
-    }
-
-    return $timestamp;
-}
-
-function block_acclaim_update_form_with_badge_name($fromform)
-{
-    $all_badges_names = json_decode($fromform->badgename);
-    $badge_id = $fromform->badgeid;
-
-    if(isset($all_badges_names->$badge_id)){
-        $badge_name =  $all_badges_names->$badge_id;
-        $fromform->badgename = $badge_name;
-    }
-
-    return $fromform;
-}
-
-function block_acclaim_create_pending_badge($event)
-{
-    global $DB;
-    $course = block_acclaim_get_block_course($event->courseid);
-    $pending_badge = block_acclaim_create_pending_badge_obj($event, $course);
-    $DB->insert_record('block_acclaim_pending_badges', $pending_badge);
-}
-
-function block_acclaim_create_pending_badge_obj($event, $course)
-{
-    $user_id = $event->relateduserid;
-    $badge_template_id = $course->badgeid;
-    $course_id = $event->courseid;
-    $user = block_acclaim_return_user($user_id);
-    $firstname = $user->firstname;
-    $lastname = $user->lastname;
-    $email = $user->email;
-	$expires_at = $course->expiration;
-
-    $pending_badge = new stdClass();
-    $pending_badge->badgetemplateid = $badge_template_id;
-    $pending_badge->firstname = $firstname;
-    $pending_badge->lastname = $lastname;
-    $pending_badge->expiration = $expires_at;
-    $pending_badge->recipientemail = $email;
-
-    return $pending_badge;
-}
-
-function block_acclaim_issue_badge($curl, $time, $url, $token){
-    global $DB;
-
-    $datetime = block_acclaim_convert_time_stamp($time);
-
-    $pending_badges = $DB->get_records('block_acclaim_pending_badges');
-
-	foreach ($pending_badges as &$badge) {
-
-        $payload = [
-            'badge_template_id' => $badge->badgetemplateid,
-            'issued_to_first_name' => $badge->firstname,
-            'issued_to_last_name' => $badge->lastname,
-            'recipient_email' => $badge->recipientemail,
-            'issued_at' => $datetime
-        ];
-
-        if($badge->expiration){
-            $payload['expires_at'] =
-                block_acclaim_convert_time_stamp($badge->expiration);
+                if (isset($json['metadata'])) {
+                    $metadata = $json['metadata'];
+                    $next_page_url = $metadata['next_page_url'];
+                }
+            }
         }
+        return $badge_items;
+    }
 
-        $curl->post(
-            $url, $payload, array( "CURLOPT_USERPWD" => $token. ":" )
-        );
+    ////////////////////
+    // Private functions
+    ////////////////////
 
-        if ($curl->info["http_code"] == 201) {
-            // The badge has been issued so we remove it from pending.
-            $DB->delete_records('block_acclaim_pending_badges',  array('id' => $badge->id));
-        } elseif ($curl->info["http_code"] == 422) {
-            // Acclaim can not issue the badge so we remove this from pending
-            // so it will not try again.  This could happen for example if the
-            // user already has been issued a badge.
-            error_log(print_r($curl->response, true));
-            $DB->delete_records('block_acclaim_pending_badges',  array('id' => $badge->id));
+    /**
+     * Get the badge list from the Acclaim API, as JSON.
+     *
+     * @param curl $curl
+     * @param string $url
+     * @param string $token
+     * @return object
+     */
+    private function fetch_badge_json($curl, $url, $token) {
+        $params = array('sort' => 'name', 'filter' => 'state::active');
+        $options = array('CURLOPT_USERPWD' => $token . ':');
+        return $curl->get($url, $params, $options);
+    }
+
+    /**
+     * Create a user-readable list of badge names.
+     *
+     * @param object $json - Badge list JSON from the Acclaim API.
+     * @param array $badge_names - An accumulated list of badge names.
+     */
+    private function accumulate_badge_names($json, &$badge_items) {
+        $arr = json_decode($json, true);
+        if (isset($arr['data'])) {
+            foreach ($arr['data'] as $item) {
+                $len = strlen($item['name']);
+                $badge_items[$item['id']] = $len > 75 ? substr($item['name'], 0, 75 - $len) . '...' : $item['name'];
+            }
         } else {
-            // some other issue is preventing the badge from being issued
-            // for example site down or token incorrectly entered.  The
-            // record is left as pending to try again in the future.
-            error_log(print_r($curl->response, true));
+            error_log('invalid api, token or unable to connect');
         }
-    };
+    }
 
-    return $curl->info["http_code"];
-}
-
-function block_acclaim_return_json_badges($curl, $url, $token)
-{
-    $params = array("sort" => "name", "filter" => "state::active");
-    $options = array("CURLOPT_USERPWD" => $token . ":");
-
-    $http = $curl->get($url, $params, $options);
-    return $http;
-}
-
-function block_acclaim_build_radio_buttons($json, $badge_items)
-{
-    $arr = json_decode($json, true);
-    if (isset($arr['data'])) {
-        foreach ($arr['data'] as $item) {
-            $friendly_name = block_acclaim_truncate($item["name"]);
-            $badge_id = $item["id"];
-            $badge_items[$badge_id] = $friendly_name;
+    /**
+     * Send a request to Credly's Acclaim API.
+     *
+     * @param string $url - The URL to send. If omitted, request all badge templates for the
+     *   configured organization.
+     * @return object - The JSON response.
+     */
+    private function query_api($url) {
+        if (is_null($url)) {
+            $config = self::$config;
+            $url = "{$config->url}/organizations/{$config->org}/badge_templates?sort=name&filter=state::active";
         }
-    } else {
-        error_log("invalid api, token or unable to connect");
-    }
-    return $badge_items;
-}
 
-function block_acclaim_images()
-{
-    $badge_items = array();
-	
-    $json = block_acclaim_query_acclaim_api(null);
-    $badge_items = block_acclaim_build_radio_buttons($json, $badge_items);
-    
-    $next_page_url = "";
-    if (isset($json['metadata'])) {
-    	$metadata = $json['metadata'];
-    	$next_page_url = $metadata["next_page_url"];
-    	
-    	while (!is_null($next_page_url)) {
-                $json = block_acclaim_query_acclaim_api($next_page_url."&sort=name&filter=state::active");
-                $badge_items = block_acclaim_build_radio_buttons($json, $badge_items);
-    		
-    		if (isset($json['metadata'])) {
-    			$metadata = $json['metadata'];
-    			$next_page_url = $metadata["next_page_url"];
-    		}
-    	}
+        $params = array('sort' => 'name', 'filter' => 'state::active');
+        $options = array('CURLOPT_USERPWD' => self::$config->token . ':');
+        $result = (new curl())->get($url, $params, $options);
+        return $result;
     }
-    return $badge_items;
+
+    /**
+     * Create a timestamp readable by the Acclaim API.
+     *
+     * @param string $timestamp
+     * @return string
+     */
+    private function convert_time_stamp($timestamp) {
+        return $timestamp ? gmdate('Y-m-d  h:i:s a', $timestamp) : null;
+    }
 }

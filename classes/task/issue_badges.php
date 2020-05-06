@@ -1,44 +1,52 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Credly's Acclaim Moodle Block Plugin
 //
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Credly's Acclaim Moodle Block Plugin is free software: you can redistribute it
+// and/or modify it under the terms of the MIT license as published by
+// the Free Software Foundation.
 //
-// Moodle is distributed in the hope that it will be useful,
+// This script is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
+// MIT License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// You can find the GNU General Public License at <https://opensource.org/licenses/MIT>.
 
 /**
- * Create request to issue a new credential
+ * Credly's Acclaim Moodle Block Plugin
+ * Credly: http://youracclaim.com
+ * Moodle: http://moodle.org/
+ *
+ * Scheduled task to issue badges.
  *
  * @package    block_acclaim
- * @copyright  2014 Yancy Ribbens <yancy.ribbens@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2020 Credly, Inc. <http://youracclaim.com>
+ * @license    https://opensource.org/licenses/MIT
  */
-
 namespace block_acclaim\task;
 
 defined('MOODLE_INTERNAL') || die();
+require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 
 class issue_badges extends \core\task\scheduled_task {
+    /**
+     * Get the name of the task.
+     *
+     * @return string
+     */
     public function get_name() {
         return get_string('issuecredentials', 'block_acclaim');
     }
 
+    /**
+     * Issue a badge (typically due to a course completion event).
+     *
+     * @return string
+     */
     public function execute() {
         global $CFG;
         require_once($CFG->libdir. '/filelib.php');
         require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
-        $url = block_acclaim_get_issue_badge_url();
-        $token = block_acclaim_get_request_token();
-        $curl = new \curl;
-        block_acclaim_issue_badge($curl, time(), $url, $token);
+        (new \block_acclaim_lib())->issue_pending_badges(new \curl);
     }
 }

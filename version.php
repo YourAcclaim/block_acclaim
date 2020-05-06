@@ -1,26 +1,26 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Credly's Acclaim Moodle Block Plugin
 //
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Credly's Acclaim Moodle Block Plugin is free software: you can redistribute it
+// and/or modify it under the terms of the MIT license as published by
+// the Free Software Foundation.
 //
-// Moodle is distributed in the hope that it will be useful,
+// This script is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
+// MIT License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// You can find the GNU General Public License at <https://opensource.org/licenses/MIT>.
 
 /**
-* Version details
-*
-* @package    block_acclaim
-* @copyright  2014 Yancy Ribbens <yancy.ribbens@gmail.com>
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * Credly's Acclaim Moodle Block Plugin
+ * Credly: http://youracclaim.com
+ * Moodle: http://moodle.org/
+ *
+ * @package    block_acclaim
+ * @copyright  2020 Credly, Inc. <http://youracclaim.com>
+ * @license    https://opensource.org/licenses/MIT
+ */
 
 defined('MOODLE_INTERNAL') || die();
 
