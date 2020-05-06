@@ -119,4 +119,13 @@ class block_acclaim extends block_base {
         }
         return $this->content;
     }
+
+    /**
+     * Called when the block is deleted.
+     */
+    function instance_delete() {
+        global $DB;
+        global $COURSE;
+        $DB->delete_records('block_acclaim_courses', array('courseid' => $COURSE->id));
+    }
 }
