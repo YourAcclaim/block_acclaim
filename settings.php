@@ -25,15 +25,15 @@ defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
     $urls = array(
-        'https://api.youracclaim.com/v1' => 'Production',
-        'https://sandbox-api.youracclaim.com/v1' => 'Sandbox'
+        'https://api.youracclaim.com/v1' => get_string('production', 'block_acclaim'),
+        'https://sandbox-api.youracclaim.com/v1' => get_string('sandbox', 'block_acclaim')
     );
 
     $settings->add(
         new admin_setting_configselect(
             'block_acclaim/url',
-            'Domain',
-            'Production or Sandbox',
+            get_string('setting_domain', 'block_acclaim'),
+            null,
             0,
             $urls
         )
@@ -42,8 +42,8 @@ if ($ADMIN->fulltree) {
     $settings->add(
         new admin_setting_configtext(
             'block_acclaim/org',
-            'Organization ID',
-            'Example: 6bb2e1c7-c66b-4d47-9301-4a6b9e792e2c',
+            get_string('setting_org_id', 'block_acclaim'),
+            get_string('setting_org_help', 'block_acclaim', '6bb2e1c7-c66b-4d47-9301-4a6b9e792e2c'),
             null,
             PARAM_TEXT
         )
@@ -52,8 +52,8 @@ if ($ADMIN->fulltree) {
     $settings->add(
         new admin_setting_configtext(
             'block_acclaim/token',
-            'Token',
-            'Example: FZ9QZ4sDtEwNR7Tcv-Yi',
+            get_string('setting_app_token', 'block_acclaim'),
+            get_string('setting_app_token_help', 'block_acclaim', 'FZ9QZ4sDtEwNR7Tcv-Yi'),
             null,
             PARAM_TEXT
         )

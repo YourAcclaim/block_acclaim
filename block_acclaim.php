@@ -53,16 +53,18 @@ class block_acclaim extends block_base {
      * Display specialized text for the course block (the selected badge name).
      */
     public function specialization() {
-        global $COURSE;
-        $course_id = $COURSE->id;
+        if (isset($this->config)) {
+            global $COURSE;
+            $course_id = $COURSE->id;
 
-        $badge_name = $this->acclaim->get_course_info($course_id, 'badgename');
-        
-        if ($badge_name == '') {
-            $badge_name = 'No Badge Selected';
+            $badge_name = $this->acclaim->get_course_info($course_id, 'badgename');
+
+            if ($badge_name == '') {
+                $badge_name = 'No Badge Selected';
+            }
+
+            $this->config->text = $badge_name;
         }
-
-        $this->config->text = $badge_name;
     }
 
     /**
@@ -81,12 +83,12 @@ class block_acclaim extends block_base {
      */
     public function applicable_formats() {
         return array(
-           'site-index' => false,
-           'course-view' => true,
-           'course-view-social' => false,
-           'mod' => false, 
-           'mod-quiz' => false
-          );
+            'site-index' => false,
+            'course-view' => true,
+            'course-view-social' => false,
+            'mod' => false,
+            'mod-quiz' => false
+        );
     }
 
     /**
@@ -113,7 +115,7 @@ class block_acclaim extends block_base {
     
         $context = context_course::instance($COURSE->id);
         if (has_capability('block/acclaim:editbadge', $this->context)) {
-            $this->content->footer = html_writer::link($url,'Select Badge');
+            $this->content->footer = html_writer::link($url, get_string('select_badge', 'block_acclaim'));
         }
         return $this->content;
     }

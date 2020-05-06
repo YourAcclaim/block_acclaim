@@ -18,6 +18,7 @@
  * Moodle: http://moodle.org/
  *
  * A form to select which badge this course issues on completion.
+ * @see https://docs.moodle.org/dev/Form_API
  *
  * @package    block_acclaim
  * @copyright  2020 Credly, Inc. <http://youracclaim.com>
@@ -31,10 +32,10 @@ class block_acclaim_form extends moodleform {
         $mform =& $this->_form;
 
         //populate form
-        $mform->addElement('header','displayinfo', 'Select Badge');
+        $mform->addElement('header','displayinfo', get_string('select_badge', 'block_acclaim'));
         $badge_items = (new \block_acclaim_lib())->badge_names();
-        $mform->addElement('select', 'badgeid', 'Acclaim Badges', $badge_items, '');
-        $mform->addElement('date_time_selector', 'expiration', 'Expires', array('optional' => true));
+        $mform->addElement('select', 'badgeid', get_string('acclaim_badges', 'block_acclaim'), $badge_items, '');
+        $mform->addElement('date_time_selector', 'expiration', get_string('expires', 'block_acclaim'), array('optional' => true));
         $mform->setAdvanced('optional');
 
         // hidden elements

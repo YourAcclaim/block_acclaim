@@ -47,7 +47,12 @@ class block_acclaim_lib {
      */
     public function create_pending_badge($course_id, $user_id) {
         global $DB;
-        $course = $DB->get_record('block_acclaim_courses', array('courseid' => $course_id), '*', MUST_EXIST);
+        $course = $DB->get_record('block_acclaim_courses', array('courseid' => $course_id), '*');
+        if (!$course) {
+            // This method can be called outside of Acclaim context (for example, by unit tests)
+            // with a non-Acclaim course.
+            return;
+        }
         $user = $DB->get_record('user', array('id' => $user_id), '*', MUST_EXIST);
 
         $pending_badge = new stdClass();

@@ -43,11 +43,11 @@ require_login($course);
 
 $PAGE->set_url('/blocks/acclaim/view.php', array('id' => $courseid));
 $PAGE->set_pagelayout('standard');
-$PAGE->set_heading('Acclaim');
+$PAGE->set_heading(get_string('acclaim', 'block_acclaim'));
 
 $settingsnode = $PAGE->settingsnav->add('acclaim');
 $editurl = new moodle_url('/blocks/acclaim/view.php', array('id' => $id, 'courseid' => $courseid, 'blockid' => $blockid));
-$editnode = $settingsnode->add('Select Badge', $editurl);
+$editnode = $settingsnode->add(get_string('select_badge', 'block_acclaim'), $editurl);
 $editnode->make_active();
 
 $acclaim_form_data = new block_acclaim_form();
