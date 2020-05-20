@@ -35,7 +35,7 @@ class issue_badges extends \core\task\scheduled_task {
      * @return string
      */
     public function get_name() {
-        return get_string('issuecredentials', 'block_acclaim');
+        return get_string('issuecredentials_task_name', 'block_acclaim');
     }
 
     /**

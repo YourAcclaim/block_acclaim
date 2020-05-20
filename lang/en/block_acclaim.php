@@ -41,3 +41,5 @@ $string['setting_org_id'] = 'Acclaim Organization ID';
 $string['setting_org_help'] = 'Example: {$a}';
 $string['setting_app_token'] = 'Acclaim App Token';
 $string['setting_app_token_help'] = 'This is obtained from Acclaim support. Example: {$a}';
+$string['setting_app_token_help'] = 'This is obtained from Acclaim support. Example: {$a}';
+$string['issuecredentials_task_name'] = 'Acclaim - Issue Badges';
