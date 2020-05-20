@@ -44,7 +44,7 @@ if ($ADMIN->fulltree) {
             'block_acclaim/org',
             get_string('setting_org_id', 'block_acclaim'),
             get_string('setting_org_help', 'block_acclaim', '6bb2e1c7-c66b-4d47-9301-4a6b9e792e2c'),
-            null,
+            '',
             PARAM_TEXT
         )
     );
@@ -54,7 +54,7 @@ if ($ADMIN->fulltree) {
             'block_acclaim/token',
             get_string('setting_app_token', 'block_acclaim'),
             get_string('setting_app_token_help', 'block_acclaim', 'FZ9QZ4sDtEwNR7Tcv-Yi'),
-            null,
+            '',
             PARAM_TEXT
         )
     );

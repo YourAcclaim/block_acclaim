@@ -24,7 +24,7 @@
  * @license    https://opensource.org/licenses/MIT
  */
 require_once('../../config.php');
-require_once('block_acclaim_form.php');
+require_once('./block_acclaim_form.php');
 require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 
 global $DB, $OUTPUT, $PAGE;

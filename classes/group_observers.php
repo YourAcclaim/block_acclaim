@@ -34,5 +34,3 @@ class group_observers {
         (new \block_acclaim_lib())->create_pending_badge($event->courseid, $event->relateduserid);
     }
 }
-
-?>
