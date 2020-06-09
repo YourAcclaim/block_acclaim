@@ -53,18 +53,19 @@ class block_acclaim extends block_base {
      * Display specialized text for the course block (the selected badge name).
      */
     public function specialization() {
-        if (isset($this->config)) {
-            global $COURSE;
-            $course_id = $COURSE->id;
-
-            $badge_name = $this->acclaim->get_course_info($course_id, 'badgename');
-
-            if ($badge_name == '') {
-                $badge_name = 'No Badge Selected';
-            }
-
-            $this->config->text = $badge_name;
+        if(!isset($this->config)){
+            $this->config = new stdClass();
         }
+        global $COURSE;
+        $course_id = $COURSE->id;
+
+        $badge_name = $this->acclaim->get_course_info($course_id, 'badgename');
+
+        if (!isset($badge_name) || $badge_name == '') {
+            $badge_name = 'No Badge Selected';
+        }
+
+        $this->config->text = $badge_name;
     }
 
     /**
