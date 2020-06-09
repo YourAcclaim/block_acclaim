@@ -52,7 +52,8 @@ $acclaim_form_data = new block_acclaim_form();
 
 $toform['blockid'] = $blockid;
 $toform['courseid'] = $courseid;
-if($block_acclaim_course = $DB->get_record('block_acclaim_courses', array('courseid' => $courseid))){
+$block_acclaim_course = $DB->get_record('block_acclaim_courses', array('courseid' => $courseid))
+if ($block_acclaim_course) {
     $toform['badgeid'] = $block_acclaim_course->badgeid;
 }
 

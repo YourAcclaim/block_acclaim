@@ -61,7 +61,7 @@ class block_acclaim extends block_base {
 
         $badge_name = $this->acclaim->get_course_info($course_id, 'badgename');
 
-        if ($badge_name == '') {
+        if (!isset($badge_name) || $badge_name == '') {
             $badge_name = 'No Badge Selected';
         }
 
