@@ -52,12 +52,21 @@ class block_acclaim_lib_test extends advanced_testcase {
     public function test_accumulate_badge_names() {
         $this->acclaim = new block_acclaim_lib();
         $badge_items = array();
-        $json = json_encode(array('data' => array(0 => array('id' => 1, 'name' => 'johnny'))));
+        $json = array('data' => array(0 => array('id' => 1, 'name' => 'johnny')));
         $this->invokePrivate('accumulate_badge_names', array($json, &$badge_items));
         $this->assertEquals(array(1 => 'johnny'), $badge_items);
-        $json = json_encode(array('data' => array(0 => array('id' => 2, 'name' => 'billy'))));
+        $json = array('data' => array(0 => array('id' => 2, 'name' => 'billy')));
         $this->invokePrivate('accumulate_badge_names', array($json, &$badge_items));
         $this->assertEquals(array(1 => 'johnny', 2 => 'billy'), $badge_items);
+    }
+
+    public function test_badge_names() {
+        // phpunit doesn't allow mocking private methods, so use an overrides class instead of mocks.
+        $this->acclaim = new block_acclaim_lib_badge_names_test();
+
+        $badge_items = $this->acclaim->badge_names();
+
+        $this->assertEquals(array('one' => 'First', 'two' => 'Second', 'three' => 'Third'), $badge_items);
     }
 
     public function test_create_pending_badge() {
@@ -343,5 +352,26 @@ class block_acclaim_lib_test extends advanced_testcase {
         $method = $reflection->getMethod($methodName);
         $method->setAccessible(true);
         return $method->invokeArgs($this->acclaim, $parameters);
+    }
+}
+
+// Class to override protected methods for a specific test (since phpunit doesn't allow stubbing of those methods).
+// This class tests that badge_names() accumulates badges over multiple pages.
+class block_acclaim_lib_badge_names_test extends block_acclaim_lib {
+    function search_badges($search = null) {
+        return array(
+            'data' => array(array('name' => 'First', 'id' => 'one')),
+            'metadata' => array('next_page_url' => 'p1')
+        );
+    }
+    function query_api($url) {
+        if ($url == 'p1') {
+            return array(
+                'data' => array(array('name' => 'Third', 'id' => 'three')),
+                'metadata' => array('next_page_url' => 'p2')
+            );
+        } else {
+            return array('data' => array(array('name' => 'Second', 'id' => 'two')));
+        }
     }
 }
