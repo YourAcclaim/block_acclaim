@@ -195,10 +195,10 @@ class block_acclaim_lib {
     protected function accumulate_badge_names($json, &$badge_items) {
         if (isset($json['data'])) {
             foreach ($json['data'] as $item) {
-                try {
+                if (isset($item['name'])) {
                     $len = strlen($item['name']);
                     $badge_items[$item['id']] = $len > 75 ? substr($item['name'], 0, 75 - $len) . '...' : $item['name'];
-                } catch (Throwable $e) {
+                } else {
                     error_log('block_acclaim: error parsing badge name JSON:');
                     error_log(print_r($item, true));
                 }
