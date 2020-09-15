@@ -53,19 +53,8 @@ class block_acclaim extends block_base {
      * Display specialized text for the course block (the selected badge name).
      */
     public function specialization() {
-        if(!isset($this->config)){
-            $this->config = new stdClass();
-        }
-        global $COURSE;
-        $course_id = $COURSE->id;
-
-        $badge_name = $this->acclaim->get_course_info($course_id, 'badgename');
-
-        if (!isset($badge_name) || $badge_name == '') {
-            $badge_name = 'No Badge Selected';
-        }
-
-        $this->config->text = $badge_name;
+        // There are times when this function does not seem to be called, resulted in unexpected UI. Because of
+        // this, all logic is in get_content.
     }
 
     /**
@@ -93,28 +82,45 @@ class block_acclaim extends block_base {
     }
 
     /**
-     * Generate UI from view.php.
+     * Generate UI from view.php. This function will not be called if the block is hidden (config ->
+     * Show on this Page), but the block will still (confusingly) appear with just a title.
      *
      * @return string
      */
     public function get_content() {
-        global $COURSE, $DB, $OUTPUT, $CFG, $PAGE;
+        global $COURSE;
 
         if ($this->content !== null) {
             return $this->content;
         }
 
+        $badge_name = $this->acclaim->get_course_info($COURSE->id, 'badgename');
+
         $this->content = new stdClass;
-        if (!empty($this->config->text)) {
-            $this->content->text = $this->config->text;
+        if (empty($badge_name)) {
+            $this->content->text = get_string('acclaim', 'no_badge');
+        } else {
+            $this->content->text = $badge_name;
         }
-        
+
+        /* Debugging
+        global $DB;
+        $course = $DB->get_record('block_acclaim_courses', array('courseid' => $COURSE->id));
+        if (empty($course)) {
+            $this->content->text .= "<br><br>Error: Course [" . $COURSE->id . "] not found.";
+        } else {
+            $this->content->text .= "<br><br>Acclaim id: {$course->id}";
+            $this->content->text .= "<br>Course id: {$course->courseid}, {$COURSE->id}";
+            $this->content->text .= "<br>Badge id: {$course->badgeid}";
+            $this->content->text .= "<br>Badge name: {$course->badgename}";
+        }
+        */
+
         $url = new moodle_url(
             '/blocks/acclaim/view.php',
             array('blockid' => $this->instance->id, 'courseid' => $COURSE->id)
         );
     
-        $context = context_course::instance($COURSE->id);
         if (has_capability('block/acclaim:editbadge', $this->context)) {
             $this->content->footer = html_writer::link($url, get_string('select_badge', 'block_acclaim'));
         }

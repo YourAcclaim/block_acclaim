@@ -33,6 +33,7 @@ $string['acclaim:myaddinstance'] = 'Add a new Acclaim block to the My Moodle pag
 $string['acclaim:editbadge'] = 'Select a badge to associate with a course';
 $string['privacy:metadata'] = 'The Acclaim block only stores course and badge template details. User data is stored in a temporary table and removed once issued';
 $string['select_badge'] = 'Select Badge';
+$string['no_badge'] = 'No badge selected';
 $string['acclaim_badges'] = 'Acclaim Badges';
 $string['expires'] = 'Expires';
 $string['production'] = 'Production'; // The name of the Acclaim production server.
