@@ -98,7 +98,7 @@ class block_acclaim extends block_base {
 
         $this->content = new stdClass;
         if (empty($badge_name)) {
-            $this->content->text = get_string('acclaim', 'no_badge');
+            $this->content->text = get_string('no_badge', 'block_acclaim');
         } else {
             $this->content->text = $badge_name;
         }
