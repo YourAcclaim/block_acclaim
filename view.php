@@ -55,6 +55,7 @@ $toform['courseid'] = $courseid;
 $block_acclaim_course = $DB->get_record('block_acclaim_courses', array('courseid' => $courseid));
 if ($block_acclaim_course) {
     $toform['badgeid'] = $block_acclaim_course->badgeid;
+    $toform['expiration'] = $block_acclaim_course->expiration;
 }
 
 $acclaim_form_data->set_data($toform);
