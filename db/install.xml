@@ -11,6 +11,7 @@
         <FIELD NAME="badgeid" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Badge Template ID"/>
         <FIELD NAME="expiration" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Badge Expiration"/>
         <FIELD NAME="badgename" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Badge Name"/>
+        <FIELD NAME="badgeurl" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Badge URL"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

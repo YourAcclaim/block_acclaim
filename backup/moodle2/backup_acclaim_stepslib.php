@@ -42,7 +42,7 @@ class backup_acclaim_structure_step extends backup_block_structure_step {
             $acclaim = new backup_nested_element(
                 'acclaim_course',
                 array('id'),
-                array('courseid', 'badgeid', 'expiration', 'badgename')
+                array('courseid', 'badgeid', 'expiration', 'badgename', 'badgeurl')
             );
 
             $acclaim->set_source_table('block_acclaim_courses', array('courseid' => backup::VAR_COURSEID));

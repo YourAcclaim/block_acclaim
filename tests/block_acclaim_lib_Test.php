@@ -202,7 +202,7 @@ class block_acclaim_lib_test extends advanced_testcase {
 
         $this->assert_pending_badge_count(0);
     }
-   
+
     ////////////////////
     // Private functions
     ////////////////////
