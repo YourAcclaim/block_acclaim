@@ -28,6 +28,7 @@ require_once(__DIR__ . '/../../config.php');
 class block_acclaim_lib {
     public static $config = null;
     public static $allow_print = true;
+    public static $allow_debug = false;
 
     public static function config() {
         if (!isset(self::$config)) {
@@ -79,11 +80,17 @@ class block_acclaim_lib {
 
         $pending_badges = $DB->get_records('block_acclaim_pending_badges');
 
+        if (self::$allow_debug) {
+            print_r($pending_badges);
+        }
+
         foreach ($pending_badges as &$badge) {
             // Output goes to the cron log.
             if (self::$allow_print) {
                 print "Acclaim block: Issuing badge {$badge->badgetemplateid} to {$badge->recipientemail}.\n";
             }
+
+
             $payload = [
                 'badge_template_id' => $badge->badgetemplateid,
                 'issued_to_first_name' => $badge->firstname,
@@ -99,6 +106,8 @@ class block_acclaim_lib {
             $curl->post(
                 $url, $payload, array('CURLOPT_USERPWD' => block_acclaim_lib::$config->token . ':')
             );
+
+            print $curl->info['http_code'];
 
             if ($curl->info['http_code'] == 201) {
                 // The badge has been issued so we remove it from pending.
@@ -153,9 +162,20 @@ class block_acclaim_lib {
     function set_course_badge_template($fromform) {
         global $DB;
 
-        $badge_name = json_decode($fromform->badgename)->{$fromform->badgeid};
+        $badge_data = json_decode($fromform->badgename, true);
+        $badge_name = $badge_data[$fromform->badgeid];
+
+        $urlId = $fromform->badgeid.'_url';
+        $badge_url = $badge_data[$urlId];
+
         if (isset($badge_name)) {
             $fromform->badgename = $badge_name;
+        }
+
+        if (isset($badge_url)) {
+            $fromform->badgeurl = $badge_url;
+        } else {
+          $fromform->badgeurl = "Badge URL Isn't Set";
         }
 
         $DB->delete_records('block_acclaim_courses',  array('courseid' => $fromform->courseid));
@@ -168,17 +188,31 @@ class block_acclaim_lib {
      *
      * @return array
      */
-    function badge_names() {
+    function badge_names($returntype = '') {
         $badge_items = array();
+        $badge_urls = array();
 
-        $json = $this->search_badges();
-        $this->accumulate_badge_names($json, $badge_items);
+        $json = $this->query_api(null);
+        $this->accumulate_badge_names($json, $badge_items, $badge_urls);
 
-        while (isset($json['metadata']['next_page_url'])) {
-            $json = $this->query_api($json['metadata']['next_page_url']);
-            $this->accumulate_badge_names($json, $badge_items);
+        $next_page_url = '';
+        if (isset($json['metadata'])) {
+            $metadata = $json['metadata'];
+            $next_page_url = $metadata['next_page_url'];
+
+            while (!is_null($next_page_url)) {
+                $json = $this->query_api("$next_page_url&sort=name&filter=state::active");
+                $this->accumulate_badge_names($json, $badge_items, $badge_urls);
+
+                if (isset($json['metadata'])) {
+                    $metadata = $json['metadata'];
+                    $next_page_url = $metadata['next_page_url'];
+                }
+            }
         }
-
+        if ($returntype == 'urls') {
+          return $badge_urls;
+        }
         return $badge_items;
     }
 
@@ -187,52 +221,55 @@ class block_acclaim_lib {
     ////////////////////
 
     /**
+     * Get the badge list from the Acclaim API, as JSON.
+     *
+     * @param curl $curl
+     * @param string $url
+     * @param string $token
+     * @return object
+     */
+    private function fetch_badge_json($curl, $url, $token) {
+        $params = array('sort' => 'name', 'filter' => 'state::active');
+        $options = array('CURLOPT_USERPWD' => $token . ':');
+        return $curl->get($url, $params, $options);
+    }
+
+    /**
      * Create a user-readable list of badge names.
      *
      * @param object $json - Badge list JSON from the Acclaim API.
      * @param array $badge_names - An accumulated list of badge names.
      */
-    protected function accumulate_badge_names($json, &$badge_items) {
-        if (isset($json['data'])) {
-            foreach ($json['data'] as $item) {
-                if (isset($item['name'])) {
-                    $len = strlen($item['name']);
-                    $badge_items[$item['id']] = $len > 75 ? substr($item['name'], 0, 75 - $len) . '...' : $item['name'];
-                } else {
-                    error_log('block_acclaim: error parsing badge name JSON:');
-                    error_log(print_r($item, true));
-                }
+    private function accumulate_badge_names($json, &$badge_items, &$badge_urls) {
+        $arr = json_decode($json, true);
+        if (isset($arr['data'])) {
+            foreach ($arr['data'] as $item) {
+                $len = strlen($item['name']);
+                $badge_items[$item['id']] = $len > 75 ? substr($item['name'], 0, 75 - $len) . '...' : $item['name'];
+                $badge_urls[$item['id'].'_url'] = $item['url'];
             }
         } else {
-            error_log('block_acclaim: invalid api, token or unable to connect');
+            error_log('invalid api, token or unable to connect');
         }
     }
 
     /**
      * Send a request to Credly's Acclaim API.
      *
-     * @param string $search - Search for this string
+     * @param string $url - The URL to send. If omitted, request all badge templates for the
+     *   configured organization.
      * @return object - The JSON response.
      */
-    protected function search_badges($search = null) {
-        $config = self::$config;
-        $url = "{$config->url}/organizations/{$config->org}/badge_templates?sort=name&filter=state::active";
-        if ($search) {
-            $url .= "|name::$search";
+    private function query_api($url) {
+        if (is_null($url)) {
+            $config = self::$config;
+            $url = "{$config->url}/organizations/{$config->org}/badge_templates?sort=name&filter=state::active";
         }
-        return $this->query_api($url);
-    }
 
-    /**
-     * Send a request to Credly's Acclaim API.
-     *
-     * @param string $url - The URL to send.
-     * @return object - The JSON response.
-     */
-    protected function query_api($url) {
+        $params = array('sort' => 'name', 'filter' => 'state::active');
         $options = array('CURLOPT_USERPWD' => self::$config->token . ':');
-        $result = (new curl())->get($url, null, $options);
-        return json_decode($result, true);
+        $result = (new curl())->get($url, $params, $options);
+        return $result;
     }
 
     /**

@@ -43,7 +43,7 @@ $PAGE->set_url('/blocks/acclaim/view.php', array('id' => $courseid));
 $PAGE->set_pagelayout('standard');
 $PAGE->set_heading(get_string('acclaim', 'block_acclaim'));
 
-$settingsnode = $PAGE->settingsnav->add('acclaim');
+$settingsnode = $PAGE->settingsnav->add('Credly');
 $editurl = new moodle_url('/blocks/acclaim/view.php', array('id' => $id, 'courseid' => $courseid, 'blockid' => $blockid));
 $editnode = $settingsnode->add(get_string('select_badge', 'block_acclaim'), $editurl);
 $editnode->make_active();
