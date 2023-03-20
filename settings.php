@@ -14,19 +14,19 @@
 
 /**
  * Credly's Acclaim Moodle Block Plugin
- * Credly: http://youracclaim.com
+ * Credly: http://credly.com
  * Moodle: http://moodle.org/
  *
  * @package    block_acclaim
- * @copyright  2020 Credly, Inc. <http://youracclaim.com>
+ * @copyright  2020 Credly, Inc. <http://credly.com>
  * @license    https://opensource.org/licenses/MIT
  */
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
     $urls = array(
-        'https://api.youracclaim.com/v1' => get_string('production', 'block_acclaim'),
-        'https://sandbox-api.youracclaim.com/v1' => get_string('sandbox', 'block_acclaim')
+        'https://api.credly.com/v1' => get_string('production', 'block_acclaim'),
+        'https://sandbox-api.credly.com/v1' => get_string('sandbox', 'block_acclaim')
     );
 
     $settings->add(
