@@ -194,6 +194,7 @@ class block_acclaim_lib {
 
         $json = $this->query_api(null);
         $this->accumulate_badge_names($json, $badge_items, $badge_urls);
+        $json = json_decode($json, true);
 
         $next_page_url = '';
         if (isset($json['metadata'])) {
@@ -203,6 +204,7 @@ class block_acclaim_lib {
             while (!is_null($next_page_url)) {
                 $json = $this->query_api("$next_page_url&sort=name&filter=state::active");
                 $this->accumulate_badge_names($json, $badge_items, $badge_urls);
+                $json = json_decode($json, true);
 
                 if (isset($json['metadata'])) {
                     $metadata = $json['metadata'];
