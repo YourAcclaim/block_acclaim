@@ -34,7 +34,7 @@ if ($ADMIN->fulltree) {
             'block_acclaim/url',
             get_string('setting_domain', 'block_acclaim'),
             null,
-            0,
+            array_keys($urls)[0],
             $urls
         )
     );

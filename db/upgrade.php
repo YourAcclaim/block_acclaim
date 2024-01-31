@@ -57,5 +57,18 @@ function xmldb_block_acclaim_upgrade($oldversion) {
         // Acclaim savepoint reached.
         upgrade_block_savepoint(true, 2020042200, 'acclaim');
     }
+
+    if ($oldversion < 2024013100) {
+        $table = new xmldb_table('block_acclaim_courses');
+        $field = new xmldb_field('badgeurl', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'badgename');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Acclaim savepoint reached.
+        // Beacon savepoint reached.
+        upgrade_block_savepoint(true, 2024013100, 'acclaim');
+    }
+
     return true;
 }
