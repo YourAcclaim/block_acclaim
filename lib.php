@@ -218,6 +218,30 @@ class block_acclaim_lib {
         return $badge_items;
     }
 
+    /**
+     * Send a request to Credly's Acclaim API to retrieve
+     * a single badge template URL
+     *
+     * @param string $id - ID of the template
+     * @return object - The JSON response.
+     */
+    public function fetch_template_url($id) {
+        if (is_null($url)) {
+            $config = self::$config;
+            $url = "{$config->url}/organizations/{$config->org}/badge_templates/{$id}";
+        }
+
+        $options = array('CURLOPT_USERPWD' => self::$config->token . ':');
+        $result = (new curl())->get($url, $params, $options);
+        $arr = json_decode($result, true);
+
+        if (!isset($arr['data'])) {
+            return 'unknown';
+        }
+
+        return $arr['data']['url'];
+    }
+
     ////////////////////
     // Private functions
     ////////////////////

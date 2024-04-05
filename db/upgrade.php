@@ -60,9 +60,23 @@ function xmldb_block_acclaim_upgrade($oldversion) {
 
     if ($oldversion < 2024013100) {
         $table = new xmldb_table('block_acclaim_courses');
-        $field = new xmldb_field('badgeurl', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'badgename');
+        $field = new xmldb_field('badgeurl', XMLDB_TYPE_CHAR, '1000', null, XMLDB_NOTNULL, null, 'none-set', 'badgename');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
+        }
+
+        $records = $DB->get_records(
+            'block_acclaim_courses',
+            ['badgeurl' => 'none-set'],
+            'id'
+        );
+
+        if ($records) {
+            $api = new block_acclaim_lib();
+            foreach ($records as $record) {
+                $record->badgeurl = $api->fetch_template_url($record->badgeid);
+                $DB->update_record('block_acclaim_courses', $record);
+            }
         }
 
         // Acclaim savepoint reached.
