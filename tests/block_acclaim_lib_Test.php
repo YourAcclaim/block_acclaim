@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/blocks/acclaim/lib.php');
 class block_acclaim_lib_test extends advanced_testcase {
     private $acclaim = null;
 
-    function setUp() {
+    function setUp(): void {
         $this->resetAfterTest(true);
 
         $this->acclaim = new block_acclaim_lib();
@@ -52,11 +52,32 @@ class block_acclaim_lib_test extends advanced_testcase {
     public function test_accumulate_badge_names() {
         $this->acclaim = new block_acclaim_lib();
         $badge_items = array();
-        $json = array('data' => array(0 => array('id' => 1, 'name' => 'johnny')));
-        $this->invokePrivate('accumulate_badge_names', array($json, &$badge_items));
+        $badge_urls = array();
+        $json = json_encode(
+            array(
+                'data' => array(
+                    array(
+                        'id' => 1,
+                        'name' => 'johnny',
+                        'url' => 'https://example.com',
+                    )
+                )
+            )
+        );
+        $this->invokePrivate('accumulate_badge_names', array($json, &$badge_items, &$badge_urls));
         $this->assertEquals(array(1 => 'johnny'), $badge_items);
-        $json = array('data' => array(0 => array('id' => 2, 'name' => 'billy')));
-        $this->invokePrivate('accumulate_badge_names', array($json, &$badge_items));
+        $json = json_encode(
+            array(
+                'data' => array(
+                    array(
+                        'id' => 2,
+                        'name' => 'billy',
+                        'url' => 'https://example.com',
+                    )
+                )
+            )
+        );
+        $this->invokePrivate('accumulate_badge_names', array($json, &$badge_items, &$badge_urls));
         $this->assertEquals(array(1 => 'johnny', 2 => 'billy'), $badge_items);
     }
 
@@ -65,8 +86,7 @@ class block_acclaim_lib_test extends advanced_testcase {
         $this->acclaim = new block_acclaim_lib_badge_names_test();
 
         $badge_items = $this->acclaim->badge_names();
-
-        $this->assertEquals(array('one' => 'First', 'two' => 'Second', 'three' => 'Third'), $badge_items);
+        $this->assertEquals(array('two' => 'Second', 'three' => 'Third'), $badge_items);
     }
 
     public function test_create_pending_badge() {
@@ -249,6 +269,7 @@ class block_acclaim_lib_test extends advanced_testcase {
         $badgenames = [
             '123' => 'mos',
             '1edb816d-a9fb-445d-b024-bb52075718e5' => 'def',
+            '1edb816d-a9fb-445d-b024-bb52075718e5_url' => 'https://example.com/mos/badge/def',
         ];
 
         $json = json_encode($badgenames);
@@ -358,20 +379,31 @@ class block_acclaim_lib_test extends advanced_testcase {
 // Class to override protected methods for a specific test (since phpunit doesn't allow stubbing of those methods).
 // This class tests that badge_names() accumulates badges over multiple pages.
 class block_acclaim_lib_badge_names_test extends block_acclaim_lib {
-    function search_badges($search = null) {
-        return array(
-            'data' => array(array('name' => 'First', 'id' => 'one')),
-            'metadata' => array('next_page_url' => 'p1')
-        );
-    }
-    function query_api($url) {
-        if ($url == 'p1') {
-            return array(
-                'data' => array(array('name' => 'Third', 'id' => 'three')),
-                'metadata' => array('next_page_url' => 'p2')
+    protected function query_api($url) {
+        if ($url == 'p2&sort=name&filter=state::active') {
+            $result = array(
+                'data' => array(
+                    array(
+                        'name' => 'Third',
+                        'id' => 'three',
+                        'url' => 'https://example.com/def/badge/third'
+                    )
+                ),
+                'metadata' => array('next_page_url' => null),
             );
         } else {
-            return array('data' => array(array('name' => 'Second', 'id' => 'two')));
+            $result = array(
+                'data' => array(
+                    array(
+                        'name' => 'Second',
+                        'id' => 'two',
+                        'url' => 'https://example.com/def/badge/second'
+                    )
+                ),
+                'metadata' => array('next_page_url' => 'p2'),
+            );
         }
+
+        return json_encode($result);
     }
 }
