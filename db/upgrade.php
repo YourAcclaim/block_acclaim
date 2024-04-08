@@ -84,5 +84,15 @@ function xmldb_block_acclaim_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2024013100, 'acclaim');
     }
 
+    if ($oldversion < 2024040800) {
+        $table = new xmldb_table('block_acclaim_courses');
+        $field = new xmldb_field('badgeurl', XMLDB_TYPE_CHAR, '1000', null, XMLDB_NOTNULL, null, 'none-set', 'badgename');
+
+        $dbman->change_field_type($table, $field);
+
+        // Acclaim savepoint reached.
+        upgrade_block_savepoint(true, 2024040800, 'acclaim');
+    }
+
     return true;
 }
